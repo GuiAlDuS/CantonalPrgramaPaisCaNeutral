@@ -1,0 +1,114 @@
+﻿aNo,Canton,Sector,Específico,Alcance 1 (ton CO2 eq),Alcance 2 (ton CO2 eq),Alcance 3 (ton CO2 eq)
+2017,Belen,Energía Estacionaria,Edificios residenciales,426.0546897,1615.656981,
+2017,Belen,Energía Estacionaria,Edificios e instalaciones comerciales e institucionales,21535.5189,3981.032623,
+2017,Belen,Energía Estacionaria,Construcción e industrias manufactureras,133548.7505,11256.55983,
+2017,Belen,Energía Estacionaria,Industrias energéticas,NO,NO,
+2017,Belen,Energía Estacionaria,"Actividades agrícolas, de silvicultura y de pesca",NO,NO,
+2017,Belen,Energía Estacionaria,Fuentes no especificadas,,,
+2017,Belen,Energía Estacionaria,"Emisiones fugitivas provenientes de la minería, el procesamiento, el almacenamiento y
+el transporte de carbón",,No aplica,No aplica
+2017,Belen,Energía Estacionaria,Emisiones fugitivas provenientes de los sistemas de petróleo y gas natural,,No aplica,No aplica
+2017,Belen,Transporte,Por carretera,130517.1838,IE,
+2017,Belen,Transporte,Ferroviario,124.2466861,IE,
+2017,Belen,Transporte,"Navegación marítima, fluvial y lacustre",,,
+2017,Belen,Transporte,Aviación,,,
+2017,Belen,Transporte,Fuera de carretera,,,No aplica
+2017,Belen,Residuos,Disposición de residuos sólidos generados en la ciudad,NO,No aplica,10843.30932
+2017,Belen,Residuos,Tratamiento biológico de residuos generados en la ciudad,0.248411455,No aplica,NO
+2017,Belen,Residuos,Incineración y quema a cielo abierto de residuos generados en la ciudad,NE,No aplica,NE
+2017,Belen,Residuos,Aguas residuales generadas en la ciudad,2768.491652,No aplica,NO
+2017,Belen,Procesos Industriales y Uso de Productos,Procesos Industriales,NO,No aplica,No aplica
+2017,Belen,Procesos Industriales y Uso de Productos,Uso de Productos,93583.57159,No aplica,No aplica
+2017,Belen,"Agricultura, Silvicultura y Otros Usos de la Tierra",Ganadería,164.89053,No aplica,No aplica
+2017,Belen,"Agricultura, Silvicultura y Otros Usos de la Tierra",Uso de la Tierra,,No aplica,No aplica
+2017,Belen,"Agricultura, Silvicultura y Otros Usos de la Tierra",Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2,2.334022,No aplica,No aplica
+2017,SanJose,Energía Estacionaria,Edificios residenciales,5698.575952,13705.10982,
+2017,SanJose,Energía Estacionaria,Edificios e instalaciones comerciales e institucionales,124261.9726,29874.22255,
+2017,SanJose,Energía Estacionaria,Construcción e industrias manufactureras,119285.512,5749.612838,
+2017,SanJose,Energía Estacionaria,Industrias energéticas,NO,NO,
+2017,SanJose,Energía Estacionaria,"Actividades agrícolas, de silvicultura y de pesca",NO,NO,
+2017,SanJose,Energía Estacionaria,Fuentes no especificadas,,,
+2017,SanJose,Energía Estacionaria,"Emisiones fugitivas provenientes de la minería, el procesamiento, el almacenamiento y
+el transporte de carbón",,No aplica,No aplica
+2017,SanJose,Energía Estacionaria,Emisiones fugitivas provenientes de los sistemas de petróleo y gas natural,,No aplica,No aplica
+2017,SanJose,Transporte,Por carretera,609943.0524,IE,
+2017,SanJose,Transporte,Ferroviario,652.2951022,NO,
+2017,SanJose,Transporte,"Navegación marítima, fluvial y lacustre",,,
+2017,SanJose,Transporte,Aviación,6592.50412,,
+2017,SanJose,Transporte,Fuera de carretera,,,No aplica
+2017,SanJose,Residuos,Disposición de residuos sólidos generados en la ciudad,111885.3418,No aplica,79127.72119
+2017,SanJose,Residuos,Tratamiento biológico de residuos generados en la ciudad,NE,No aplica,NE
+2017,SanJose,Residuos,Incineración y quema a cielo abierto de residuos generados en la ciudad,NE,No aplica,NE
+2017,SanJose,Residuos,Aguas residuales generadas en la ciudad,9994.824375,No aplica,NE
+2017,SanJose,"Agricultura, Silvicultura y Otros Usos de la Tierra",Ganadería,14.57232,No aplica,No aplica
+2017,SanJose,"Agricultura, Silvicultura y Otros Usos de la Tierra",Uso de la Tierra,NE,No aplica,No aplica
+2017,SanJose,"Agricultura, Silvicultura y Otros Usos de la Tierra",Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2,2.19743158,No aplica,No aplica
+2017,Golfito,Energía Estacionaria,Edificios residenciales,2233.886169,,NE
+2017,Golfito,Energía Estacionaria,Edificios e instalaciones comerciales e institucionales,,,NE
+2017,Golfito,Energía Estacionaria,Construcción e industrias manufactureras,,,NE
+2017,Golfito,Energía Estacionaria,Industrias energéticas,NO,NO,NO
+2017,Golfito,Energía Estacionaria,"Actividades agrícolas, de silvicultura y de pesca",0,,NE
+2017,Golfito,Energía Estacionaria,Fuentes no especificadas,NE,NE,NE
+2017,Golfito,Energía Estacionaria,"Emisiones fugitivas provenientes de la minería, el procesamiento, el almacenamiento y
+el transporte de carbón",NO,No aplica,No aplica
+2017,Golfito,Energía Estacionaria,Emisiones fugitivas provenientes de los sistemas de petróleo y gas natural,NO,No aplica,No aplica
+2017,Golfito,Transporte,Por carretera,30420.60513,IE,NE
+2017,Golfito,Transporte,Ferroviario,NO,NO,NO
+2017,Golfito,Transporte,"Navegación marítima, fluvial y lacustre",0,NO,NE
+2017,Golfito,Transporte,Aviación,,NO,NE
+2017,Golfito,Transporte,Fuera de carretera,NE,NE,No aplica
+2017,Golfito,Residuos,Disposición de residuos sólidos generados en la ciudad,NO,No aplica,6554.633421
+2017,Golfito,Residuos,Tratamiento biológico de residuos generados en la ciudad,20.77899996,No aplica,NO
+2017,Golfito,Residuos,Incineración y quema a cielo abierto de residuos generados en la ciudad,5394.03,No aplica,NO
+2017,Golfito,Residuos,Aguas residuales generadas en la ciudad,4277.146146,No aplica,NO
+2017,Golfito,Procesos Industriales y Uso de Productos,Procesos Industriales,NE,No aplica,No aplica
+2017,Golfito,Procesos Industriales y Uso de Productos,Uso de Productos,,No aplica,No aplica
+2017,Golfito,"Agricultura, Silvicultura y Otros Usos de la Tierra",Ganadería,,No aplica,No aplica
+2017,Golfito,"Agricultura, Silvicultura y Otros Usos de la Tierra",Uso de la Tierra,,No aplica,No aplica
+2017,Golfito,"Agricultura, Silvicultura y Otros Usos de la Tierra",Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2,,No aplica,No aplica
+2017,LaUnion,Energía Estacionaria,Edificios residenciales,2097.103127,4737.404532,NE
+2017,LaUnion,Energía Estacionaria,Edificios e instalaciones comerciales e institucionales,4302.786019,1673.577239,NE
+2017,LaUnion,Energía Estacionaria,Construcción e industrias manufactureras,7563.253496,1000.89558,NE
+2017,LaUnion,Energía Estacionaria,Industrias energéticas,NO,NO,NO
+2017,LaUnion,Energía Estacionaria,"Actividades agrícolas, de silvicultura y de pesca",492.7132456,IE,NE
+2017,LaUnion,Energía Estacionaria,Fuentes no especificadas,NE,NE,NE
+2017,LaUnion,Energía Estacionaria,"Emisiones fugitivas provenientes de la minería, el procesamiento, el almacenamiento y
+el transporte de carbón",NE,No aplica,No aplica
+2017,LaUnion,Energía Estacionaria,Emisiones fugitivas provenientes de los sistemas de petróleo y gas natural,NE,No aplica,No aplica
+2017,LaUnion,Transporte,Por carretera,82730.75078,IE,NE
+2017,LaUnion,Transporte,Ferroviario,279.5550438,NO,NE
+2017,LaUnion,Transporte,"Navegación marítima, fluvial y lacustre",NO,NO,NO
+2017,LaUnion,Transporte,Aviación,NO,NO,NO
+2017,LaUnion,Transporte,Fuera de carretera,,,No aplica
+2017,LaUnion,Residuos,Disposición de residuos sólidos generados en la ciudad,NE,No aplica,35572.95498
+2017,LaUnion,Residuos,Tratamiento biológico de residuos generados en la ciudad,541.413079,No aplica,1.80014018
+2017,LaUnion,Residuos,Incineración y quema a cielo abierto de residuos generados en la ciudad,NE,No aplica,NE
+2017,LaUnion,Residuos,Aguas residuales generadas en la ciudad,8153.418491,No aplica,NO
+2017,LaUnion,Procesos Industriales y Uso de Productos,Procesos Industriales,NE,No aplica,No aplica
+2017,LaUnion,Procesos Industriales y Uso de Productos,Uso de Productos,NE,No aplica,No aplica
+2017,LaUnion,"Agricultura, Silvicultura y Otros Usos de la Tierra",Ganadería,3929.84234,No aplica,No aplica
+2017,LaUnion,"Agricultura, Silvicultura y Otros Usos de la Tierra",Uso de la Tierra,0,No aplica,No aplica
+2017,LaUnion,"Agricultura, Silvicultura y Otros Usos de la Tierra",Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2,1238.083127,No aplica,No aplica
+2017,Desamparados,Energía Estacionaria,Edificios residenciales,5192.125937,7001.98768,NE
+2017,Desamparados,Energía Estacionaria,Edificios e instalaciones comerciales e institucionales,1032.272212,3023.447912,NE
+2017,Desamparados,Energía Estacionaria,Construcción e industrias manufactureras,8.249953214,982.7946396,NE
+2017,Desamparados,Energía Estacionaria,Industrias energéticas,NO,NO,NO
+2017,Desamparados,Energía Estacionaria,"Actividades agrícolas, de silvicultura y de pesca",IE,IE,NE
+2017,Desamparados,Energía Estacionaria,Fuentes no especificadas,NE,NE,NE
+2017,Desamparados,Energía Estacionaria,"Emisiones fugitivas provenientes de la minería, el procesamiento, el almacenamiento y
+el transporte de carbón",NE,No aplica,No aplica
+2017,Desamparados,Energía Estacionaria,Emisiones fugitivas provenientes de los sistemas de petróleo y gas natural,NE,No aplica,No aplica
+2017,Desamparados,Transporte,Por carretera,106757.4599,IE,NE
+2017,Desamparados,Transporte,Ferroviario,NO,NO,NO
+2017,Desamparados,Transporte,"Navegación marítima, fluvial y lacustre",NO,NO,NO
+2017,Desamparados,Transporte,Aviación,NO,NO,NO
+2017,Desamparados,Transporte,Fuera de carretera,,,No aplica
+2017,Desamparados,Residuos,Disposición de residuos sólidos generados en la ciudad,NO,No aplica,64668.66748
+2017,Desamparados,Residuos,Tratamiento biológico de residuos generados en la ciudad,1658.658801,No aplica,0.992717143
+2017,Desamparados,Residuos,Incineración y quema a cielo abierto de residuos generados en la ciudad,NE,No aplica,NE
+2017,Desamparados,Residuos,Aguas residuales generadas en la ciudad,522.3339467,No aplica,NO
+2017,Desamparados,Procesos Industriales y Uso de Productos,Procesos Industriales,NE,No aplica,No aplica
+2017,Desamparados,Procesos Industriales y Uso de Productos,Uso de Productos,NE,No aplica,No aplica
+2017,Desamparados,"Agricultura, Silvicultura y Otros Usos de la Tierra",Ganadería,2497.140182,No aplica,No aplica
+2017,Desamparados,"Agricultura, Silvicultura y Otros Usos de la Tierra",Uso de la Tierra,0,No aplica,No aplica
+2017,Desamparados,"Agricultura, Silvicultura y Otros Usos de la Tierra",Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2,307.9931654,No aplica,No aplica
