@@ -3,7 +3,7 @@ title: "Analisis de los datos cantonales del piloto del Programa País Carbono N
 author: "Guillermo Durán Sanabria"
 date: "12/6/2018"
 output: 
-  github_document:
+  html_document:
   toc: true
 ---
 
@@ -57,46 +57,85 @@ tablaGeneral <- tablaGeneral %>%
 ```
 
 ## Gráficos
-Total de emisiones de Alcance 1 por cantón:
+
+Los gráficos se generarán con la interface de R para la libraría de Python llamada Altair, una excelente librería para crear gráficos interactivos.
+
+Total de emisiones de *alcance 1* por cantón en valores reales (toneladas) y normalizados:
 ```{r}
-ggplot(tablaGeneral %>% 
-         group_by(Canton, Sector) %>% 
-         summarise(total = sum(Alc1, na.rm = T)),
-       aes(x = Canton, y =total, fill = Sector)) +
-  geom_col()
+library("altair")
+
+graficoTot <- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = "Canton",
+    x = "Alc1:Q",
+    color = "Sector",
+    tooltip = c("Esp", "Sector", "Alc1", "Alc2")
+  )
+
+graficoNor <- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    x = alt$X2("sum(Alc1)", stack="normalize"),
+    y = "Canton",
+    color = "Sector",
+    tooltip = c("Esp", "Sector", "Alc1", "Alc2")
+  )
+
+graficoTot & graficoNor
 ```
 
-Muestra de sector como porcentaje del total de emisiones de cada cantón:
+Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores:
 ```{r}
-totalCanton <- tablaGeneral %>% 
-  group_by(Canton) %>% 
-  summarise(sumaAlc1 = sum(Alc1, na.rm = T),
-            sumaAlc2 = sum(Alc2, na.rm = T))
+graficoEsp <- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = "Esp",
+    x = "Alc1:Q",
+    color = alt$Color("Canton", scale=alt$Scale(scheme="dark2")),
+    tooltip = "Esp"
+  )
 
-ggplot(tablaGeneral %>% 
-         group_by(Canton, Sector) %>% 
-         summarise(SecAlc1 = sum(Alc1, na.rm = T)) %>% 
-         left_join(totalCanton, by = "Canton") %>% 
-         mutate(prcAlc1 = SecAlc1/sumaAlc1*100),
-       aes(x = Canton, y =prcAlc1, fill = Sector)) +
-  geom_col()
+graficoSec <- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = "Sector",
+    x = "Alc1:Q",
+    color = "Canton"
+  )
+
+graficoSec & graficoEsp
+```
+
+Dadas las opciones de interactividad que brinda **Altair** podríamos hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.
+
+El código sería el siguiente:
+```{r}
 
 ```
 
-Contribución por cada sector específico por cantón:
-```{r}
-ggplot(tablaGeneral %>% 
-         mutate(Alc1 = replace_na(Alc1, 0)),
-       aes(x = Sector, y = Alc1, fill = Esp)) +
-  geom_col() +
-  facet_grid(rows = vars(Canton)) +
-  theme(legend.position="bottom")
-```
+Condicionar por población:
 
 ```{r}
-tablaGeneral %>%
-  mutate(Alc1 = replace_na(Alc1, 0)) %>% 
-  group_by(Sector) %>% 
-  summarise(suma = sum(Alc1))
-```
+library("altair")
+vega_data <- import_vega_data()
 
+brush <- alt$selection(type = "interval", resolve="global")
+
+base <- 
+  alt$Chart(vega_data$cars())$
+  mark_point()$
+  encode(
+    y="Miles_per_Gallon",
+    color=alt$condition(brush, "Origin", alt$ColorValue("gray"))
+  )$
+  properties(selection = brush, width = 250, height=250)
+
+chart <- (base$encode(x = "Horsepower") | base$encode( x = "Acceleration"))
+
+chart
+```
