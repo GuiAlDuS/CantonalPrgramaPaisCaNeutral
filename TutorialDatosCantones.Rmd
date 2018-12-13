@@ -37,8 +37,16 @@ tablaGeneral %>% group_by(Sector) %>% summarise()
 
 Total de sectores específicos:
 ```{r}
-tablaGeneral %>% group_by(`Específico`) %>% summarise()
+tablaGeneral %>% 
+  group_by(`Específico`) %>% 
+  summarise(
+    sumAlc1 = sum(Alc1, na.rm = T),
+    sumAlc2 = sum(Alc2, na.rm = T),
+    sumTot = sumAlc1 + sumAlc2) %>% 
+  filter(sumTot != 0)
 ```
+Notese que estamos eliminando los sectores específicos con cero emisiones tanto en Alcance 1 como en Alcance 2. De un total de 22 sectores específicos pasamos a 14.
+
 
 Número de sectores específicos por sectores generales:
 ```{r}
@@ -64,12 +72,11 @@ tablaGeneral <- tablaGeneral %>%
 ## Gráficos
 Los gráficos se generarán con la libraría Altair, utilizando la interface de R para Python **reticulate**. Altair es una excelente librería para crear gráficos interactivos. La guía para la instalación de Altair en R la pueden encontrar acá.
 
-Mapa con ubicación de los cantones utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):
+El mapa con ubicación de los cantones se hará utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):
 ```{r}
 library(sf)
 library(gdalUtils)
 library(rgdal)
-library(rmapshaper)
 
 dsn_prov <- "WFS:http://geos.snitcr.go.cr/be/IGN_5/wfs?"
 ogrListLayers(dsn_prov) #lista de capas en ese WFS
@@ -77,6 +84,7 @@ ogrListLayers(dsn_prov) #lista de capas en ese WFS
 
 Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:
 ```{r}
+library(rmapshaper)
 cantones_geo <- st_read(dsn_prov, "IGN_5:limitecantonal_5k") %>% 
   st_crop(. , c(xmin = 270000, xmax = 680000, ymax = 1260000, ymin = 880000)) %>% 
   st_transform(., 4326)
@@ -91,13 +99,15 @@ library(geojsonio)
 
 cantonesJSON <- geojson_json(cantones_geo)
 
-cantonesJSONEstudio <- geojson_json(cantones_geo %>% 
-                               select(nom_cant, SHAPE) %>% 
-                               right_join(tablaGeneral %>% 
-                                            group_by(Canton) %>% 
-                                            summarise(), 
-                                          by = c("nom_cant" = "Canton"))
-                               )
+cantonesJSONEstudio <- 
+  geojson_json(cantones_geo %>% 
+                 select(nom_cant, SHAPE) %>% 
+                 right_join(tablaGeneral %>% 
+                              group_by(Canton) %>% 
+                              summarise(Alc1 = round(sum(Alc1, na.rm = T), 0),
+                                        Alc2 = round(sum(Alc2, na.rm = T), 0)), 
+                            by = c("nom_cant" = "Canton"))
+  )
 
 ```
 
@@ -111,7 +121,8 @@ cantonesEstudio <- alt$Data(values = cantonesJSONEstudio,
 )
 
 mapaBase <- 
-  alt$Chart(cantones)$
+  alt$Chart(cantones,
+            title = "Cantones participantes")$
   mark_geoshape(
     fill = "lightgray",
     stroke = "white",
@@ -128,7 +139,20 @@ mapaCantones <-
     alt$Color("properties.nom_cant:N",
               title = "Cantones",
               scale=alt$Scale(scheme="paired")
-    )
+    ),
+    tooltip = list(
+      alt$Tooltip(field = "properties.nom_cant",
+                  type = "nominal",
+                  title = "Cantón"),
+      alt$Tooltip(field = "properties.Alc1",
+                  type = "quantitative",
+                  title = "Alcance 1 (equivalente a toneladas de CO2)",
+                  format = ".5s"),
+      alt$Tooltip(field = "properties.Alc2",
+                  type = "quantitative",
+                  title = "Alcance 2 (equivalente a toneladas de CO2)",
+                  format = ".3s")
+      )
   )
 
 mapa <- (mapaBase + mapaCantones)
@@ -140,7 +164,7 @@ mapa
 ### Visualizaciones por cantón:
 Total de emisiones de *alcance 1* por cantón en valores reales (toneladas) y normalizados:
 ```{r}
-graficoTot <- 
+graficoTotAlc1 <- 
   alt$Chart(tablaGeneral)$
   mark_bar()$
   encode(
@@ -150,13 +174,28 @@ graficoTot <-
     ),
     x = alt$X(
       "Alc1:Q",
-      axis = alt$Axis(title = "Valores del Alcance 1")
+      axis = alt$Axis(title = "Emisiones del Alcance 1")
     ),
     color = "Sector",
-    tooltip = c("Esp", "Sector", "Alc1", "Alc2")
+    tooltip = list(
+      alt$Tooltip(field = "Sector",
+                  type = "nominal",
+                  title = "Sector general"),
+      alt$Tooltip(field = "Esp",
+                  type = "nominal",
+                  title = "Sector específico"),
+      alt$Tooltip(field = "Alc1",
+                  type = "quantitative",
+                  title = "Alcance 1 (equivalente a toneladas de CO2)",
+                  format = ".5s"),
+      alt$Tooltip(field = "Alc2",
+                  type = "quantitative",
+                  title = "Alcance 2 (equivalente a toneladas de CO2)",
+                  format = ".3s")
+      )
   )
 
-graficoTot
+graficoTotAlc1
 ```
 
 Para observar mejor la proporción que aporte cada sector al total del cantón hacemos un gráfico donde igualamos las dimensiones de las barras y en el eje de las x mostramos el porcentaje de aporte de cada sector.
@@ -167,20 +206,37 @@ graficoNor <-
   mark_bar()$
   encode(
     x = alt$X(
-      "sum(Alc1)", 
+      "Alc1:Q", 
       stack="normalize",
-      axis = alt$Axis(title = "Porcentaje del total del Alcance 1")
+      axis = alt$Axis(title = "Porcentaje del total del Alcance 1",
+                      format = ".0%")
       ),
     y = alt$Y(
       "Canton",
       axis = alt$Axis(title = "")
       ),
     color = "Sector",
-    tooltip = c("Esp", "Sector", "Alc1", "Alc2")
+        tooltip = list(
+      alt$Tooltip(field = "Sector",
+                  type = "nominal",
+                  title = "Sector general"),
+      alt$Tooltip(field = "Esp",
+                  type = "nominal",
+                  title = "Sector específico"),
+      alt$Tooltip(field = "Alc1",
+                  type = "quantitative",
+                  title = "Alcance 1 (equivalente a toneladas de CO2)",
+                  format = ".5s"),
+      alt$Tooltip(field = "Alc2",
+                  type = "quantitative",
+                  title = "Alcance 2 (equivalente a toneladas de CO2)",
+                  format = ".3s")
+      )
   )
 
  graficoNor
 ```
+
 
 ### Visualizaciones por sectores
 Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores:
@@ -235,16 +291,37 @@ graficoTot <-
   )
 
 graficoEsp <- 
-  graficoTot$encode(
-    y = "Esp"
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = "Esp",
+    x = "Alc1:Q",
+    color = "Sector:N"
   )$
-  transform_filter(seleccion$ref()
-                   )
+  transform_filter(seleccion$ref())
 
-grafCompuesto <- (graficoTot & graficoEsp)
+# graficoEsp <- 
+#   graficoTot$encode(
+#     y = "Esp"
+#   )$
+#   transform_filter(seleccion$ref())
+
+
+grafCompuesto <- (graficoTot & graficoEsp)$
+  properties(
+    title = "Emisiones por sectores específicos según cantón:"
+  )
 
 grafCompuesto
 ```
 
-Condicionar por población:
+Cálculo de emisiones condicionadas por población:
+```{r}
 
+```
+
+
+Cálculo de emisiones condicionadas según las áreas de cada cantón:
+```{r}
+
+```
