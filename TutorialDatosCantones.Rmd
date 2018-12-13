@@ -3,7 +3,7 @@ title: "Analisis de los datos cantonales del piloto del Programa País Carbono N
 author: "Guillermo Durán Sanabria"
 date: "12/6/2018"
 output: 
-  html_document:
+  html_notebook:
   toc: true
 ---
 
@@ -53,40 +53,136 @@ tablaGeneral <- tablaGeneral %>%
     Esp = `Específico`,
     Alc1 = as.numeric(`Alcance 1 (ton CO2 eq)`),
     Alc2 = as.numeric(`Alcance 2 (ton CO2 eq)`),
-    Alc3 = as.numeric(`Alcance 3 (ton CO2 eq)`))
+    Alc3 = as.numeric(`Alcance 3 (ton CO2 eq)`),
+    Canton = case_when(Canton == "Belen" ~ "Belén",
+                       Canton == "LaUnion" ~ "La Unión",
+                       Canton == "SanJose" ~ "San José",
+                       TRUE ~ as.character(Canton))
+  )
 ```
 
 ## Gráficos
+Los gráficos se generarán con la libraría Altair, utilizando la interface de R para Python **reticulate**. Altair es una excelente librería para crear gráficos interactivos. La guía para la instalación de Altair en R la pueden encontrar acá.
 
-Los gráficos se generarán con la interface de R para la libraría de Python llamada Altair, una excelente librería para crear gráficos interactivos.
+Mapa con ubicación de los cantones utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):
+```{r}
+library(sf)
+library(gdalUtils)
+library(rgdal)
+library(rmapshaper)
 
+dsn_prov <- "WFS:http://geos.snitcr.go.cr/be/IGN_5/wfs?"
+ogrListLayers(dsn_prov) #lista de capas en ese WFS
+```
+
+Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:
+```{r}
+cantones_geo <- st_read(dsn_prov, "IGN_5:limitecantonal_5k") %>% 
+  st_crop(. , c(xmin = 270000, xmax = 680000, ymax = 1260000, ymin = 880000)) %>% 
+  st_transform(., 4326)
+
+cantones_geo <- ms_simplify(ms_simplify(cantones_geo)) #simplificación de polígonos para reducir tamaño del objeto
+  
+```
+
+Ya que Altair no trabaja con objetos de clase *sf*, debemos convertir los cantones a geoJSON/topoJSON:
+```{r}
+library(geojsonio)
+
+cantonesJSON <- geojson_json(cantones_geo)
+
+cantonesJSONEstudio <- geojson_json(cantones_geo %>% 
+                               select(nom_cant, SHAPE) %>% 
+                               right_join(tablaGeneral %>% 
+                                            group_by(Canton) %>% 
+                                            summarise(), 
+                                          by = c("nom_cant" = "Canton"))
+                               )
+
+```
+
+Generación de mapa de los cantones con datos:
+```{r}
+library(altair)
+
+cantones <- alt$Data(values = cantonesJSON) #específicamos que el objeto es JSON
+cantonesEstudio <- alt$Data(values = cantonesJSONEstudio,
+                            format = alt$DataFormat(property='features', type = 'json')
+)
+
+mapaBase <- 
+  alt$Chart(cantones)$
+  mark_geoshape(
+    fill = "lightgray",
+    stroke = "white",
+    strokeWidth = 1
+  )$
+  encode()$
+  properties(width = 300, height = 300)
+
+mapaCantones <- 
+  alt$Chart(cantonesEstudio)$
+  mark_geoshape(
+  )$
+  encode(
+    alt$Color("properties.nom_cant:N",
+              title = "Cantones",
+              scale=alt$Scale(scheme="paired")
+    )
+  )
+
+mapa <- (mapaBase + mapaCantones)
+
+mapa
+```
+
+
+### Visualizaciones por cantón:
 Total de emisiones de *alcance 1* por cantón en valores reales (toneladas) y normalizados:
 ```{r}
-library("altair")
-
 graficoTot <- 
   alt$Chart(tablaGeneral)$
   mark_bar()$
   encode(
-    y = "Canton",
-    x = "Alc1:Q",
+    y = alt$Y(
+      "Canton",
+      axis = alt$Axis(title = "")
+    ),
+    x = alt$X(
+      "Alc1:Q",
+      axis = alt$Axis(title = "Valores del Alcance 1")
+    ),
     color = "Sector",
     tooltip = c("Esp", "Sector", "Alc1", "Alc2")
   )
 
+graficoTot
+```
+
+Para observar mejor la proporción que aporte cada sector al total del cantón hacemos un gráfico donde igualamos las dimensiones de las barras y en el eje de las x mostramos el porcentaje de aporte de cada sector.
+
+```{r}
 graficoNor <- 
   alt$Chart(tablaGeneral)$
   mark_bar()$
   encode(
-    x = alt$X2("sum(Alc1)", stack="normalize"),
-    y = "Canton",
+    x = alt$X(
+      "sum(Alc1)", 
+      stack="normalize",
+      axis = alt$Axis(title = "Porcentaje del total del Alcance 1")
+      ),
+    y = alt$Y(
+      "Canton",
+      axis = alt$Axis(title = "")
+      ),
     color = "Sector",
     tooltip = c("Esp", "Sector", "Alc1", "Alc2")
   )
 
-graficoTot & graficoNor
+ graficoNor
 ```
 
+### Visualizaciones por sectores
 Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores:
 ```{r}
 graficoEsp <- 
@@ -94,7 +190,10 @@ graficoEsp <-
   mark_bar()$
   encode(
     y = "Esp",
-    x = "Alc1:Q",
+    x = alt$X(
+      "Alc1:Q",
+      axis = alt$Axis(title = "Valores del Alcance 1")
+    ),
     color = alt$Color("Canton", scale=alt$Scale(scheme="dark2")),
     tooltip = "Esp"
   )
@@ -104,38 +203,48 @@ graficoSec <-
   mark_bar()$
   encode(
     y = "Sector",
-    x = "Alc1:Q",
+    x = alt$X(
+      "Alc1:Q",
+      axis = alt$Axis(title = "")
+    ),
     color = "Canton"
   )
 
 graficoSec & graficoEsp
 ```
 
-Dadas las opciones de interactividad que brinda **Altair** podríamos hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.
+Dadas las opciones de interactividad que brinda **Altair** vamos a hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.
 
 El código sería el siguiente:
 ```{r}
+seleccion <- alt$selection(type = "single", encodings = list("y"))
 
+graficoTot <- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = "Canton",
+    x = alt$X(
+      "Alc1:Q", 
+      axis = alt$Axis(title = "")
+    ),
+    color = alt$condition(seleccion, "Sector", alt$value("lightgray"))
+  )$
+  properties(
+    selection = seleccion
+  )
+
+graficoEsp <- 
+  graficoTot$encode(
+    y = "Esp"
+  )$
+  transform_filter(seleccion$ref()
+                   )
+
+grafCompuesto <- (graficoTot & graficoEsp)
+
+grafCompuesto
 ```
 
 Condicionar por población:
 
-```{r}
-library("altair")
-vega_data <- import_vega_data()
-
-brush <- alt$selection(type = "interval", resolve="global")
-
-base <- 
-  alt$Chart(vega_data$cars())$
-  mark_point()$
-  encode(
-    y="Miles_per_Gallon",
-    color=alt$condition(brush, "Origin", alt$ColorValue("gray"))
-  )$
-  properties(selection = brush, width = 250, height=250)
-
-chart <- (base$encode(x = "Horsepower") | base$encode( x = "Acceleration"))
-
-chart
-```
