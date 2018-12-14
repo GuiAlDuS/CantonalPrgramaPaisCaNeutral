@@ -1,7 +1,7 @@
 ---
-title: "Analisis de los datos cantonales del piloto del Programa País Carbono Neutral"
+title: "Visualizando los datos cantonales del piloto del Programa País Carbono Neutral"
 description: | 
-  Tutorial de análisis de datos de la Dirección de Cambio Climático de Costa Rica
+  Tutorial de análisis de datos de la Dirección de Cambio Climático de Costa Rica como parte del fellow de la Iniciativa Latinoamericana para los Datos Abiertos (ILDA)
 author: 
 - name: "Guillermo Durán Sanabria"
 date: "12/13/2018"
@@ -18,7 +18,7 @@ En este tutorial se trabajará con las tablas resultado del piloto del **Program
 
 La tabla contiene datos del inventario de emisiones de gases de efecto invernadero realizado en los cantones de **Belén**, **San José**, **Golfito**, **La Unión**, **Desamparados** y **Monteverde**. Más información sobre el proyecto que generó estos datos puede accederse en el sitio web de la DCC.
 
-La mayor parte del análisis se realizará utilizando los paquetes del Tidyverse.
+Los paquetes que se utilizarán en el análisis son:
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -29,7 +29,7 @@ library(tidyverse)
 La tabla con los datos de los cantones pueden accederse [acá](https://raw.githubusercontent.com/GuiAlDuS/CantonalProgramaPaisCaNeutral/master/TablaGeneralCantones.csv).
 
 ```{r}
-tablaGeneral <- read_csv("TablaGeneralCantones.csv")
+tablaGeneralIni <- read_csv("TablaGeneralCantones.csv")
 ```
 
 La tabla tabla cuenta con siete columnas:
@@ -43,7 +43,7 @@ La tabla tabla cuenta con siete columnas:
 Corrección de nombres de columnas y tipos de datos en las columnas:
 
 ```{r}
-tablaGeneral <- tablaGeneral %>% 
+tablaGeneralIni <- tablaGeneralIni %>% 
   mutate(
     Esp = `Específico`,
     Alc1 = as.numeric(`Alcance 1 (ton CO2 eq)`),
@@ -60,27 +60,47 @@ tablaGeneral <- tablaGeneral %>%
 Total de Sectores generales:
 
 ```{r}
-tablaGeneral %>% group_by(Sector) %>% summarise()
+tablaGeneralIni %>% group_by(Sector) %>% summarise()
 ```
 
 Número de sectores específicos por sectores generales:
 
 ```{r}
-tablaGeneral %>% group_by(Sector, Esp) %>% summarise() %>% group_by(Sector) %>% summarise(n())
+tablaGeneralIni %>% group_by(Sector, Esp) %>% summarise() %>% group_by(Sector) %>% summarise(n())
 ```
 
 Total de sectores específicos:
 
 ```{r}
-tablaGeneral %>% 
+tablaGeneralIni %>% 
   group_by(Esp) %>% 
   summarise(
     sumAlc1 = sum(Alc1, na.rm = T),
     sumAlc2 = sum(Alc2, na.rm = T),
+    sumAlc3 = sum(Alc3, na.rm = T),
     sumTot = sumAlc1 + sumAlc2) %>% 
   filter(sumTot != 0)
 ```
-Notese que estamos eliminando los sectores específicos con cero emisiones tanto en Alcance 1 como en Alcance 2. De un total de 22 sectores específicos pasamos a 14.
+Notese que existen varios sectores específicos con cero emisiones tanto en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.
+
+Para la claridad de los gráficos, eliminamos esos sectores específicos sin emisiones en ninguno de los dos alcances.
+
+```{r}
+tablaGeneral <- tablaGeneralIni %>%
+  left_join(tablaGeneralIni %>% 
+              group_by(Esp) %>% 
+              summarise(
+                sumAlc1 = sum(Alc1, na.rm = T),
+                sumAlc2 = sum(Alc2, na.rm = T),
+                sumAlc3 = sum(Alc3, na.rm = T),
+                sumTot = sumAlc1 + sumAlc2) %>% 
+              filter(sumTot != 0), 
+            by = "Esp") %>% 
+  filter(sumTot != 0) %>% 
+  select(-(4:7), -(12:14))
+  
+```
+
 
 ## Gráficos
 Los gráficos se generarán con la libraría Altair, utilizando la interface de R para Python **reticulate**. Altair es una excelente librería para crear gráficos interactivos. La guía para la instalación de Altair en R la pueden encontrar acá.
