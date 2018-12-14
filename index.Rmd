@@ -2,7 +2,8 @@
 title: "Analisis de los datos cantonales del piloto del Programa País Carbono Neutral"
 description: | 
   Tutorial de análisis de datos de la Dirección de Cambio Climático de Costa Rica
-author: "Guillermo Durán Sanabria"
+author: 
+- name: "Guillermo Durán Sanabria"
 date: "12/13/2018"
 output:
   radix::radix_article:
@@ -18,6 +19,7 @@ En este tutorial se trabajará con las tablas resultado del piloto del **Program
 La tabla contiene datos del inventario de emisiones de gases de efecto invernadero realizado en los cantones de **Belén**, **San José**, **Golfito**, **La Unión**, **Desamparados** y **Monteverde**. Más información sobre el proyecto que generó estos datos puede accederse en el sitio web de la DCC.
 
 Los paquetes que se utilizarán en el análisis son:
+
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
@@ -36,6 +38,7 @@ La tabla tabla cuenta con siete columnas:
 - *Sector*: sector energético
 
 Corrección de nombres de columnas y tipos de datos en las columnas:
+
 ```{r}
 tablaGeneral <- tablaGeneral %>% 
   mutate(
@@ -52,11 +55,13 @@ tablaGeneral <- tablaGeneral %>%
 
 ### Resumen de variables:
 Total de Sectores generales:
+
 ```{r}
 tablaGeneral %>% group_by(Sector) %>% summarise()
 ```
 
 Total de sectores específicos:
+
 ```{r}
 tablaGeneral %>% 
   group_by(`Específico`) %>% 
@@ -70,6 +75,7 @@ Notese que estamos eliminando los sectores específicos con cero emisiones tanto
 
 
 Número de sectores específicos por sectores generales:
+
 ```{r}
 tablaGeneral %>% group_by(Sector, `Específico`) %>% summarise() %>% group_by(Sector) %>% summarise(n())
 ```
@@ -78,6 +84,7 @@ tablaGeneral %>% group_by(Sector, `Específico`) %>% summarise() %>% group_by(Se
 Los gráficos se generarán con la libraría Altair, utilizando la interface de R para Python **reticulate**. Altair es una excelente librería para crear gráficos interactivos. La guía para la instalación de Altair en R la pueden encontrar acá.
 
 El mapa con ubicación de los cantones se hará utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):
+
 ```{r}
 library(sf)
 library(gdalUtils)
@@ -88,6 +95,7 @@ ogrListLayers(dsn_prov) #lista de capas en ese WFS
 ```
 
 Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:
+
 ```{r}
 library(rmapshaper)
 cantones_geo <- st_read(dsn_prov, "IGN_5:limitecantonal_5k") %>% 
@@ -99,6 +107,7 @@ cantones_geo <- ms_simplify(ms_simplify(cantones_geo)) #simplificación de polí
 ```
 
 Ya que Altair no trabaja con objetos de clase *sf*, debemos convertir los cantones a geoJSON/topoJSON:
+
 ```{r}
 library(geojsonio)
 
@@ -117,6 +126,7 @@ cantonesJSONEstudio <-
 ```
 
 Generación de mapa de los cantones con datos:
+
 ```{r}
 library(altair)
 
@@ -168,6 +178,7 @@ mapa
 
 ### Visualizaciones por cantón:
 Total de emisiones de *alcance 1* por cantón en valores reales (toneladas) y normalizados:
+
 ```{r}
 graficoTotAlc1 <- 
   alt$Chart(tablaGeneral)$
@@ -245,6 +256,7 @@ graficoNor <-
 
 ### Visualizaciones por sectores
 Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores:
+
 ```{r}
 graficoEsp <- 
   alt$Chart(tablaGeneral)$
@@ -277,6 +289,7 @@ graficoSec & graficoEsp
 Dadas las opciones de interactividad que brinda **Altair** vamos a hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.
 
 El código sería el siguiente:
+
 ```{r}
 seleccion <- alt$selection(type = "single", encodings = list("y"))
 
@@ -321,12 +334,14 @@ grafCompuesto
 ```
 
 Cálculo de emisiones condicionadas por población:
+
 ```{r}
 
 ```
 
 
 Cálculo de emisiones condicionadas según las áreas de cada cantón:
+
 ```{r}
 
 ```

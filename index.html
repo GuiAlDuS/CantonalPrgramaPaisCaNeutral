@@ -49,7 +49,7 @@
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["LICENSE","TablaGeneralCantones.csv","TutorialDatosCantones.html","TutorialDatosCantones.nb.html"]}
+  {"type":"character","attributes":{},"value":["index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/htmlwidgets-1.3/htmlwidgets.js","index_files/jquery-1.11.3/jquery.min.js","index_files/vega-4.0.0/LICENSE","index_files/vega-4.0.0/promise.min.js","index_files/vega-4.0.0/symbol.min.js","index_files/vega-4.0.0/vega.js","index_files/vega-4.0.0/vega.min.js","index_files/vega-embed-3.16.0/LICENSE","index_files/vega-embed-3.16.0/vega-embed-modified.js","index_files/vega-embed-3.16.0/vega-embed.css","index_files/vega-lite-2.6.0/LICENSE","index_files/vega-lite-2.6.0/vega-lite.min.js","index_files/vegawidget-binding-0.0.5.9000/vegawidget.js","index_files/webcomponents-2.0.0/webcomponents.js","LICENSE","TablaGeneralCantones.csv","TutorialDatosCantones.html","TutorialDatosCantones.nb.html"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -965,8 +965,7 @@
 </div>
 
 <div class="d-byline">
-  
-  Guillermo Durán Sanabria
+  Guillermo Durán Sanabria  
   
 <br/>12/13/2018
 </div>
@@ -974,7 +973,7 @@
 <div class="d-article">
 <p>En este tutorial se trabajará con las tablas resultado del piloto del <strong>Programa País Carbono Neutralidad categoría cantonal</strong>, suministrados por la Dirección de Cambio Climático (DCC) del Ministerio de Ambiente y Energía (MINAE).</p>
 <p>La tabla contiene datos del inventario de emisiones de gases de efecto invernadero realizado en los cantones de <strong>Belén</strong>, <strong>San José</strong>, <strong>Golfito</strong>, <strong>La Unión</strong>, <strong>Desamparados</strong> y <strong>Monteverde</strong>. Más información sobre el proyecto que generó estos datos puede accederse en el sitio web de la DCC.</p>
-Los paquetes que se utilizarán en el análisis son:
+<p>Los paquetes que se utilizarán en el análisis son:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(tidyverse)</code></pre>
@@ -986,7 +985,7 @@ library(tidyverse)</code></pre>
 tablaGeneral &lt;- read_csv(&quot;TablaGeneralCantones.csv&quot;)</code></pre>
 </div>
 <p>La tabla tabla cuenta con siete columnas: - <em>aNo</em>: es el año en que se tomaron las mediciones - <em>Canton</em>: cantón que reporta - <em>Sector</em>: sector energético</p>
-Corrección de nombres de columnas y tipos de datos en las columnas:
+<p>Corrección de nombres de columnas y tipos de datos en las columnas:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 tablaGeneral &lt;- tablaGeneral %&gt;% 
@@ -1002,7 +1001,7 @@ tablaGeneral &lt;- tablaGeneral %&gt;%
   )</code></pre>
 </div>
 <h3 id="resumen-de-variables">Resumen de variables:</h3>
-Total de Sectores generales:
+<p>Total de Sectores generales:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 tablaGeneral %&gt;% group_by(Sector) %&gt;% summarise()</code></pre>
@@ -1016,7 +1015,7 @@ tablaGeneral %&gt;% group_by(Sector) %&gt;% summarise()</code></pre>
 4 Residuos                                           
 5 Transporte                                         </code></pre>
 </div>
-Total de sectores específicos:
+<p>Total de sectores específicos:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 tablaGeneral %&gt;% 
@@ -1046,7 +1045,7 @@ tablaGeneral %&gt;%
 14 Uso de Productos                             93584.      0  9.36e4</code></pre>
 </div>
 <p>Notese que estamos eliminando los sectores específicos con cero emisiones tanto en Alcance 1 como en Alcance 2. De un total de 22 sectores específicos pasamos a 14.</p>
-Número de sectores específicos por sectores generales:
+<p>Número de sectores específicos por sectores generales:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 tablaGeneral %&gt;% group_by(Sector, `Específico`) %&gt;% summarise() %&gt;% group_by(Sector) %&gt;% summarise(n())</code></pre>
@@ -1062,7 +1061,7 @@ tablaGeneral %&gt;% group_by(Sector, `Específico`) %&gt;% summarise() %&gt;% gr
 </div>
 <h2 id="graficos">Gráficos</h2>
 <p>Los gráficos se generarán con la libraría Altair, utilizando la interface de R para Python <strong>reticulate</strong>. Altair es una excelente librería para crear gráficos interactivos. La guía para la instalación de Altair en R la pueden encontrar acá.</p>
-El mapa con ubicación de los cantones se hará utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):
+<p>El mapa con ubicación de los cantones se hará utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(sf)
@@ -1082,7 +1081,7 @@ attr(,&quot;driver&quot;)
 attr(,&quot;nlayers&quot;)
 [1] 9</code></pre>
 </div>
-Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:
+<p>Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(rmapshaper)
@@ -1100,7 +1099,7 @@ proj4string:    +proj=tmerc +lat_0=0 +lon_0=-84 +k=0.9999 +x_0=500000 +y_0=0 +el
 <pre class="r"><code>
 cantones_geo &lt;- ms_simplify(ms_simplify(cantones_geo)) #simplificación de polígonos para reducir tamaño del objeto</code></pre>
 </div>
-Ya que Altair no trabaja con objetos de clase <em>sf</em>, debemos convertir los cantones a geoJSON/topoJSON:
+<p>Ya que Altair no trabaja con objetos de clase <em>sf</em>, debemos convertir los cantones a geoJSON/topoJSON:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(geojsonio)
@@ -1117,7 +1116,7 @@ cantonesJSONEstudio &lt;-
                             by = c(&quot;nom_cant&quot; = &quot;Canton&quot;))
   )</code></pre>
 </div>
-Generación de mapa de los cantones con datos:
+<p>Generación de mapa de los cantones con datos:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(altair)
@@ -1165,8 +1164,8 @@ mapaCantones &lt;-
 mapa &lt;- (mapaBase + mapaCantones)
 
 mapa</code></pre>
-<div id="htmlwidget-1e41b98eaa9b497b5972" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1e41b98eaa9b497b5972">{"x":{
+<div id="htmlwidget-9ad42407def36a7fb660" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9ad42407def36a7fb660">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1239,7 +1238,7 @@ mapa</code></pre>
 },"evals":[],"jsHooks":[]}</script>
 </div>
 <h3 id="visualizaciones-por-canton">Visualizaciones por cantón:</h3>
-Total de emisiones de <em>alcance 1</em> por cantón en valores reales (toneladas) y normalizados:
+<p>Total de emisiones de <em>alcance 1</em> por cantón en valores reales (toneladas) y normalizados:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 graficoTotAlc1 &lt;- 
@@ -1274,8 +1273,8 @@ graficoTotAlc1 &lt;-
   )
 
 graficoTotAlc1</code></pre>
-<div id="htmlwidget-bbedbdb0366faa168c9d" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-bbedbdb0366faa168c9d">{"x":{
+<div id="htmlwidget-dbf518fa6bac4725d6de" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-dbf518fa6bac4725d6de">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2784,8 +2783,8 @@ graficoNor &lt;-
   )
 
  graficoNor</code></pre>
-<div id="htmlwidget-c0e99f91b658dd88f380" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c0e99f91b658dd88f380">{"x":{
+<div id="htmlwidget-19634f52233f17e16410" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-19634f52233f17e16410">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4260,7 +4259,7 @@ graficoNor &lt;-
 },"evals":[],"jsHooks":[]}</script>
 </div>
 <h3 id="visualizaciones-por-sectores">Visualizaciones por sectores</h3>
-Ahora los gráficos de emisiones de <em>alcance 1</em> por sectores generales y específicos, mostrando los cantones con colores:
+<p>Ahora los gráficos de emisiones de <em>alcance 1</em> por sectores generales y específicos, mostrando los cantones con colores:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 graficoEsp &lt;- 
@@ -4289,8 +4288,8 @@ graficoSec &lt;-
   )
 
 graficoSec &amp; graficoEsp</code></pre>
-<div id="htmlwidget-2d677884820f79382934" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2d677884820f79382934">{"x":{
+<div id="htmlwidget-05951a804106dd0e66e7" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-05951a804106dd0e66e7">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -5770,7 +5769,7 @@ graficoSec &amp; graficoEsp</code></pre>
 },"evals":[],"jsHooks":[]}</script>
 </div>
 <p>Dadas las opciones de interactividad que brinda <strong>Altair</strong> vamos a hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.</p>
-El código sería el siguiente:
+<p>El código sería el siguiente:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 seleccion &lt;- alt$selection(type = &quot;single&quot;, encodings = list(&quot;y&quot;))
@@ -5813,8 +5812,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   )
 
 grafCompuesto</code></pre>
-<div id="htmlwidget-c242fb2bffc43c0ca093" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c242fb2bffc43c0ca093">{"x":{
+<div id="htmlwidget-7cf376a7b583b99f5217" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7cf376a7b583b99f5217">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -7303,11 +7302,11 @@ grafCompuesto</code></pre>
   }
 },"evals":[],"jsHooks":[]}</script>
 </div>
-Cálculo de emisiones condicionadas por población:
+<p>Cálculo de emisiones condicionadas por población:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-Cálculo de emisiones condicionadas según las áreas de cada cantón:
+<p>Cálculo de emisiones condicionadas según las áreas de cada cantón:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
