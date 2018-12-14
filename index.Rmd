@@ -281,7 +281,7 @@ graficoEsp <-
 
 graficoSec <- 
   alt$Chart(tablaGeneral,
-            title = "Sectores generarles")$
+            title = "Sectores generales")$
   mark_bar()$
   encode(
     y = alt$Y(
