@@ -49,7 +49,7 @@
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/htmlwidgets-1.3/htmlwidgets.js","index_files/jquery-1.11.3/jquery.min.js","index_files/vega-4.0.0/LICENSE","index_files/vega-4.0.0/promise.min.js","index_files/vega-4.0.0/symbol.min.js","index_files/vega-4.0.0/vega.js","index_files/vega-4.0.0/vega.min.js","index_files/vega-embed-3.16.0/LICENSE","index_files/vega-embed-3.16.0/vega-embed-modified.js","index_files/vega-embed-3.16.0/vega-embed.css","index_files/vega-lite-2.6.0/LICENSE","index_files/vega-lite-2.6.0/vega-lite.min.js","index_files/vegawidget-binding-0.0.5.9000/vegawidget.js","index_files/webcomponents-2.0.0/webcomponents.js","index.nb.html","LICENSE","TablaGeneralCantones.csv","TutorialDatosCantones.html","TutorialDatosCantones.nb.html"]}
+  {"type":"character","attributes":{},"value":["index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/htmlwidgets-1.3/htmlwidgets.js","index_files/jquery-1.11.3/jquery.min.js","index_files/vega-4.0.0/LICENSE","index_files/vega-4.0.0/promise.min.js","index_files/vega-4.0.0/symbol.min.js","index_files/vega-4.0.0/vega.js","index_files/vega-4.0.0/vega.min.js","index_files/vega-embed-3.16.0/LICENSE","index_files/vega-embed-3.16.0/vega-embed-modified.js","index_files/vega-embed-3.16.0/vega-embed.css","index_files/vega-lite-2.6.0/LICENSE","index_files/vega-lite-2.6.0/vega-lite.min.js","index_files/vegawidget-binding-0.0.5.9000/vegawidget.js","index_files/webcomponents-2.0.0/webcomponents.js","LICENSE","TablaGeneralCantones.csv","TutorialDatosCantones.nb.html"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1179,6 +1179,10 @@ mapaCantones &lt;-
       alt$Tooltip(field = &quot;properties.Alc2&quot;,
                   type = &quot;quantitative&quot;,
                   title = &quot;Alcance 2 (equivalente a toneladas de CO2)&quot;,
+                  format = &quot;.3s&quot;),
+            alt$Tooltip(field = &quot;properties.Alc3&quot;,
+                  type = &quot;quantitative&quot;,
+                  title = &quot;Alcance 3 (equivalente a toneladas de CO2)&quot;,
                   format = &quot;.3s&quot;)
       )
   )
@@ -1188,8 +1192,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0)
 
 mapa</code></pre>
-<div id="htmlwidget-51ac4ab68a7d60b51f62" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-51ac4ab68a7d60b51f62">{"x":{
+<div id="htmlwidget-c7742dce067bf2c053e8" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c7742dce067bf2c053e8">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1252,6 +1256,12 @@ mapa</code></pre>
               "format": ".3s",
               "title": "Alcance 2 (equivalente a toneladas de CO2)",
               "type": "quantitative"
+            },
+            {
+              "field": "properties.Alc3",
+              "format": ".3s",
+              "title": "Alcance 3 (equivalente a toneladas de CO2)",
+              "type": "quantitative"
             }
           ]
         },
@@ -1266,6 +1276,177 @@ mapa</code></pre>
 },"evals":[],"jsHooks":[]}</script>
 </div>
 <h3 id="visualizaciones-por-canton">Visualizaciones por cantón:</h3>
+Total de emisiones de los tres alcances por cantón:
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+totalesCanton &lt;- tablaGeneral %&gt;% 
+  gather(key = tipoAlc, value = valorAlc, -(1:4), -8) %&gt;% 
+  group_by(Canton, tipoAlc) %&gt;% 
+  summarise(totalAlc = sum(valorAlc, na.rm = T)) %&gt;% 
+  mutate(tipoAlc = case_when(tipoAlc == &quot;Alc1&quot; ~ &quot;Alcance 1&quot;,
+                             tipoAlc == &quot;Alc2&quot; ~ &quot;Alcance 2&quot;,
+                             tipoAlc == &quot;Alc3&quot; ~ &quot;Alcance 3&quot;))
+
+graficoAlcs &lt;- 
+  alt$Chart(totalesCanton)$
+  mark_bar()$
+  encode(
+    x = alt$X(
+      &quot;totalAlc:Q&quot;,
+      axis = alt$Axis(title = &quot;Emisiones equivalentes a toneladas de CO2&quot;)
+    ),
+    y = alt$Y(
+      &quot;Canton&quot;,
+      axis = alt$Axis(title = &quot;&quot;)
+    ),
+    color = alt$Color(
+      &quot;tipoAlc&quot;,
+      legend = alt$Legend(title = &quot;Tipo de alcance&quot;),
+      scale=alt$Scale(scheme=&quot;Category10&quot;)
+    ),
+    tooltip = list(
+      alt$Tooltip(field = &quot;totalAlc&quot;,
+                  type = &quot;quantitative&quot;,
+                  title = &quot;Total de emisiones por alcance&quot;,
+                  format = &quot;.5s&quot;)
+    )
+  )
+
+graficoAlcs  </code></pre>
+<div id="htmlwidget-5bc6531e0276fb2ecf90" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5bc6531e0276fb2ecf90">{"x":{
+  "chart_spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
+    "config": {
+      "view": {
+        "height": 300,
+        "width": 400
+      }
+    },
+    "data": {
+      "name": "data-5b96907d14e00e713922bf39dda17ffd"
+    },
+    "datasets": {
+      "data-5b96907d14e00e713922bf39dda17ffd": [
+        {
+          "Canton": "Belén",
+          "tipoAlc": "Alcance 1",
+          "totalAlc": 382671.2908
+        },
+        {
+          "Canton": "Belén",
+          "tipoAlc": "Alcance 2",
+          "totalAlc": 16853.2494
+        },
+        {
+          "Canton": "Belén",
+          "tipoAlc": "Alcance 3",
+          "totalAlc": 10843.3093
+        },
+        {
+          "Canton": "Desamparados",
+          "tipoAlc": "Alcance 1",
+          "totalAlc": 117976.2341
+        },
+        {
+          "Canton": "Desamparados",
+          "tipoAlc": "Alcance 2",
+          "totalAlc": 11008.2302
+        },
+        {
+          "Canton": "Desamparados",
+          "tipoAlc": "Alcance 3",
+          "totalAlc": 64669.6602
+        },
+        {
+          "Canton": "Golfito",
+          "tipoAlc": "Alcance 1",
+          "totalAlc": 42346.4464
+        },
+        {
+          "Canton": "Golfito",
+          "tipoAlc": "Alcance 2",
+          "totalAlc": 0
+        },
+        {
+          "Canton": "Golfito",
+          "tipoAlc": "Alcance 3",
+          "totalAlc": 6554.6334
+        },
+        {
+          "Canton": "La Unión",
+          "tipoAlc": "Alcance 1",
+          "totalAlc": 111328.9187
+        },
+        {
+          "Canton": "La Unión",
+          "tipoAlc": "Alcance 2",
+          "totalAlc": 7411.8774
+        },
+        {
+          "Canton": "La Unión",
+          "tipoAlc": "Alcance 3",
+          "totalAlc": 35574.7551
+        },
+        {
+          "Canton": "San José",
+          "tipoAlc": "Alcance 1",
+          "totalAlc": 988330.8481
+        },
+        {
+          "Canton": "San José",
+          "tipoAlc": "Alcance 2",
+          "totalAlc": 49328.9452
+        },
+        {
+          "Canton": "San José",
+          "tipoAlc": "Alcance 3",
+          "totalAlc": 79127.7212
+        }
+      ]
+    },
+    "encoding": {
+      "color": {
+        "field": "tipoAlc",
+        "legend": {
+          "title": "Tipo de alcance"
+        },
+        "scale": {
+          "scheme": "Category10"
+        },
+        "type": "nominal"
+      },
+      "tooltip": [
+        {
+          "field": "totalAlc",
+          "format": ".5s",
+          "title": "Total de emisiones por alcance",
+          "type": "quantitative"
+        }
+      ],
+      "x": {
+        "axis": {
+          "title": "Emisiones equivalentes a toneladas de CO2"
+        },
+        "field": "totalAlc",
+        "type": "quantitative"
+      },
+      "y": {
+        "axis": {
+          "title": ""
+        },
+        "field": "Canton",
+        "type": "nominal"
+      }
+    },
+    "mark": "bar"
+  },
+  "embed_options": {
+    "defaultStyle": true,
+    "renderer": "canvas"
+  }
+},"evals":[],"jsHooks":[]}</script>
+</div>
 <p>Total de emisiones de <em>alcance 1</em> por cantón en valores reales (toneladas) y normalizados:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -1279,7 +1460,7 @@ graficoTotAlc1 &lt;-
     ),
     x = alt$X(
       &quot;Alc1:Q&quot;,
-      axis = alt$Axis(title = &quot;Emisiones del Alcance 1&quot;)
+      axis = alt$Axis(title = &quot;Emisiones del Alcance 1 equivalentes a toneladas de CO2&quot;)
     ),
     color = &quot;Sector&quot;,
     tooltip = list(
@@ -1292,17 +1473,13 @@ graficoTotAlc1 &lt;-
       alt$Tooltip(field = &quot;Alc1&quot;,
                   type = &quot;quantitative&quot;,
                   title = &quot;Alcance 1 (equivalente a toneladas de CO2)&quot;,
-                  format = &quot;.5s&quot;),
-      alt$Tooltip(field = &quot;Alc2&quot;,
-                  type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 2 (equivalente a toneladas de CO2)&quot;,
-                  format = &quot;.3s&quot;)
+                  format = &quot;.5s&quot;)
     )
   )$configure_legend(labelLimit= 0)
 
 graficoTotAlc1</code></pre>
-<div id="htmlwidget-0da6916de8e976a22d10" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0da6916de8e976a22d10">{"x":{
+<div id="htmlwidget-ef904ab3c6c8003a6b17" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ef904ab3c6c8003a6b17">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2032,17 +2209,11 @@ graficoTotAlc1</code></pre>
           "format": ".5s",
           "title": "Alcance 1 (equivalente a toneladas de CO2)",
           "type": "quantitative"
-        },
-        {
-          "field": "Alc2",
-          "format": ".3s",
-          "title": "Alcance 2 (equivalente a toneladas de CO2)",
-          "type": "quantitative"
         }
       ],
       "x": {
         "axis": {
-          "title": "Emisiones del Alcance 1"
+          "title": "Emisiones del Alcance 1 equivalentes a toneladas de CO2"
         },
         "field": "Alc1",
         "type": "quantitative"
@@ -2100,8 +2271,8 @@ graficoNor &lt;-
   )$configure_legend(labelLimit= 0)
 
  graficoNor</code></pre>
-<div id="htmlwidget-2a0bdadb1323cd68997c" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2a0bdadb1323cd68997c">{"x":{
+<div id="htmlwidget-3e223d3f3a8d75cbf90e" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3e223d3f3a8d75cbf90e">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2904,8 +3075,8 @@ graficoSec &lt;-
 grafico &lt;- (graficoSec &amp; graficoEsp)$configure_axis(labelLimit=10000)
 
 grafico</code></pre>
-<div id="htmlwidget-594307221543c702de26" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-594307221543c702de26">{"x":{
+<div id="htmlwidget-32de5f41c74215a43b11" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-32de5f41c74215a43b11">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3685,7 +3856,8 @@ grafico</code></pre>
 <p>El código sería el siguiente:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
-seleccion &lt;- alt$selection(type = &quot;single&quot;, encodings = list(&quot;y&quot;))
+seleccion &lt;- alt$selection(type = &quot;single&quot;, 
+                           encodings = list(&quot;y&quot;))
 
 graficoTot &lt;- 
   alt$Chart(tablaGeneral)$
@@ -3701,9 +3873,7 @@ graficoTot &lt;-
     ),
     color = alt$condition(seleccion, &quot;Sector&quot;, alt$value(&quot;lightgray&quot;))
   )$
-  properties(
-    selection = seleccion
-  )
+  properties(selection = seleccion)
 
 graficoEsp &lt;- 
   alt$Chart(tablaGeneral,
@@ -3729,8 +3899,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   configure_legend(labelLimit= 0)
 
 grafCompuesto</code></pre>
-<div id="htmlwidget-8f3ec9733b1def48e3f1" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8f3ec9733b1def48e3f1">{"x":{
+<div id="htmlwidget-3dff83b038e07d745f35" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3dff83b038e07d745f35">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {

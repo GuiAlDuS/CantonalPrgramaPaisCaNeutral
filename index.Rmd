@@ -188,6 +188,10 @@ mapaCantones <-
       alt$Tooltip(field = "properties.Alc2",
                   type = "quantitative",
                   title = "Alcance 2 (equivalente a toneladas de CO2)",
+                  format = ".3s"),
+            alt$Tooltip(field = "properties.Alc3",
+                  type = "quantitative",
+                  title = "Alcance 3 (equivalente a toneladas de CO2)",
                   format = ".3s")
       )
   )
@@ -201,6 +205,48 @@ mapa
 
 
 ### Visualizaciones por cantón:
+
+Total de emisiones de los tres alcances por cantón:
+```{r}
+totalesCanton <- tablaGeneral %>% 
+  gather(key = tipoAlc, value = valorAlc, -(1:4), -8) %>% 
+  group_by(Canton, tipoAlc) %>% 
+  summarise(totalAlc = sum(valorAlc, na.rm = T)) %>% 
+  mutate(tipoAlc = case_when(tipoAlc == "Alc1" ~ "Alcance 1",
+                             tipoAlc == "Alc2" ~ "Alcance 2",
+                             tipoAlc == "Alc3" ~ "Alcance 3"))
+
+graficoAlcs <- 
+  alt$Chart(totalesCanton)$
+  mark_bar()$
+  encode(
+    x = alt$X(
+      "totalAlc:Q",
+      axis = alt$Axis(title = "Emisiones equivalentes a toneladas de CO2")
+    ),
+    y = alt$Y(
+      "Canton",
+      axis = alt$Axis(title = "")
+    ),
+    color = alt$Color(
+      "tipoAlc",
+      legend = alt$Legend(title = "Tipo de alcance"),
+      scale=alt$Scale(scheme="Category10")
+    ),
+    tooltip = list(
+      alt$Tooltip(field = "totalAlc",
+                  type = "quantitative",
+                  title = "Total de emisiones por alcance",
+                  format = ".5s")
+    )
+  )
+
+graficoAlcs  
+
+```
+
+
+
 Total de emisiones de *alcance 1* por cantón en valores reales (toneladas) y normalizados:
 
 ```{r}
@@ -214,7 +260,7 @@ graficoTotAlc1 <-
     ),
     x = alt$X(
       "Alc1:Q",
-      axis = alt$Axis(title = "Emisiones del Alcance 1")
+      axis = alt$Axis(title = "Emisiones del Alcance 1 equivalentes a toneladas de CO2")
     ),
     color = "Sector",
     tooltip = list(
@@ -227,11 +273,7 @@ graficoTotAlc1 <-
       alt$Tooltip(field = "Alc1",
                   type = "quantitative",
                   title = "Alcance 1 (equivalente a toneladas de CO2)",
-                  format = ".5s"),
-      alt$Tooltip(field = "Alc2",
-                  type = "quantitative",
-                  title = "Alcance 2 (equivalente a toneladas de CO2)",
-                  format = ".3s")
+                  format = ".5s")
     )
   )$configure_legend(labelLimit= 0)
 
@@ -325,7 +367,8 @@ Dadas las opciones de interactividad que brinda **Altair** vamos a hacer un grá
 El código sería el siguiente:
 
 ```{r}
-seleccion <- alt$selection(type = "single", encodings = list("y"))
+seleccion <- alt$selection(type = "single", 
+                           encodings = list("y"))
 
 graficoTot <- 
   alt$Chart(tablaGeneral)$
@@ -341,9 +384,7 @@ graficoTot <-
     ),
     color = alt$condition(seleccion, "Sector", alt$value("lightgray"))
   )$
-  properties(
-    selection = seleccion
-  )
+  properties(selection = seleccion)
 
 graficoEsp <- 
   alt$Chart(tablaGeneral,
