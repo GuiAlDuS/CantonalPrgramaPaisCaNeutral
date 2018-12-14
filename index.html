@@ -1055,8 +1055,8 @@ tablaGeneralIni %&gt;%
 13 Tratamiento biológico de residuos…   2221.      0    2.79e0 2.22e3
 14 Uso de Productos                    93584.      0    0.     9.36e4</code></pre>
 </div>
-<p>Notese que existen varios sectores específicos con cero emisiones tanto en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.</p>
-<p>Para la claridad de los gráficos, eliminamos esos sectores específicos sin emisiones en ninguno de los dos alcances.</p>
+<p>Notese que existen varios sectores específicos con cero emisiones en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.</p>
+<p>Para la claridad de los gráficos, eliminamos esos sectores específicos sin emisiones en ninguno de los alcances.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 tablaGeneral &lt;- tablaGeneralIni %&gt;%
@@ -1094,7 +1094,7 @@ attr(,&quot;driver&quot;)
 attr(,&quot;nlayers&quot;)
 [1] 9</code></pre>
 </div>
-<p>Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:</p>
+<p>Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y la transformamos al sistema de coordenadas WGS84 (crs = 4326):</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(rmapshaper)
@@ -1112,13 +1112,12 @@ proj4string:    +proj=tmerc +lat_0=0 +lon_0=-84 +k=0.9999 +x_0=500000 +y_0=0 +el
 <pre class="r"><code>
 cantones_geo &lt;- ms_simplify(ms_simplify(cantones_geo)) #simplificación de polígonos para reducir tamaño del objeto</code></pre>
 </div>
-<p>Ya que Altair no trabaja con objetos de clase <em>sf</em>, debemos convertir los cantones a geoJSON/topoJSON:</p>
+<p>Ya que Altair no trabaja con objetos de clase <em>sf</em>, debemos convertir los cantones a geoJSON/topoJSON. Esto lo haremos con el paquete <em>geojsonio</em>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(geojsonio)
 
 cantonesJSON &lt;- geojson_json(cantones_geo)
-
 cantonesJSONEstudio &lt;- 
   geojson_json(cantones_geo %&gt;% 
                  select(nom_cant, SHAPE) %&gt;% 
@@ -1184,8 +1183,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0)
 
 mapa</code></pre>
-<div id="htmlwidget-3a9ed8ed761d135fb035" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3a9ed8ed761d135fb035">{"x":{
+<div id="htmlwidget-6e4f54676ab280b21072" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6e4f54676ab280b21072">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1268,7 +1267,7 @@ mapa</code></pre>
 },"evals":[],"jsHooks":[]}</script>
 </div>
 <h3 id="visualizaciones-por-canton">Visualizaciones por cantón:</h3>
-<p>Total de emisiones de los tres alcances por cantón:</p>
+<p>Acumulado de emisiones de los tres alcances por cantón:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 totalesCanton &lt;- tablaGeneral %&gt;% 
@@ -1302,14 +1301,14 @@ graficoAlcs &lt;-
                   title = &quot;Tipo&quot;),
       alt$Tooltip(field = &quot;totalAlc&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Total de emisiones&quot;,
+                  title = &quot;Emisiones (ton. de CO2)&quot;,
                   format = &quot;.5s&quot;)
     )
   )
 
 graficoAlcs  </code></pre>
-<div id="htmlwidget-039401634cb38e858146" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-039401634cb38e858146">{"x":{
+<div id="htmlwidget-d7c650b69b1cc201e8df" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d7c650b69b1cc201e8df">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1420,7 +1419,7 @@ graficoAlcs  </code></pre>
         {
           "field": "totalAlc",
           "format": ".5s",
-          "title": "Total de emisiones",
+          "title": "Emisiones (ton. de CO2)",
           "type": "quantitative"
         }
       ],
@@ -1472,14 +1471,14 @@ graficoTotAlc1 &lt;-
                   title = &quot;Sector específico&quot;),
       alt$Tooltip(field = &quot;Alc1&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 1 (equiv. a ton. de CO2)&quot;,
+                  title = &quot;Alcance 1 (Ton. de CO2)&quot;,
                   format = &quot;.5s&quot;)
     )
   )$configure_legend(labelLimit= 0)
 
 graficoTotAlc1</code></pre>
-<div id="htmlwidget-69b96bf17b3b70fa90bc" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-69b96bf17b3b70fa90bc">{"x":{
+<div id="htmlwidget-b2217cdb961e431a17bf" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b2217cdb961e431a17bf">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2207,7 +2206,7 @@ graficoTotAlc1</code></pre>
         {
           "field": "Alc1",
           "format": ".5s",
-          "title": "Alcance 1 (equiv. a ton. de CO2)",
+          "title": "Alcance 1 (Ton. de CO2)",
           "type": "quantitative"
         }
       ],
@@ -2252,7 +2251,7 @@ graficoNor &lt;-
       axis = alt$Axis(title = &quot;&quot;)
       ),
     color = &quot;Sector&quot;,
-        tooltip = list(
+    tooltip = list(
       alt$Tooltip(field = &quot;Sector&quot;,
                   type = &quot;nominal&quot;,
                   title = &quot;Sector general&quot;),
@@ -2261,14 +2260,14 @@ graficoNor &lt;-
                   title = &quot;Sector específico&quot;),
       alt$Tooltip(field = &quot;Alc1&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 1 (ton. de CO2)&quot;,
+                  title = &quot;Alcance 1 (Ton. CO2)&quot;,
                   format = &quot;.5s&quot;)
       )
   )$configure_legend(labelLimit= 0)
 
  graficoNor</code></pre>
-<div id="htmlwidget-d1d6b481f0d7144c176e" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d1d6b481f0d7144c176e">{"x":{
+<div id="htmlwidget-083a9e83da05fcbde883" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-083a9e83da05fcbde883">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2996,7 +2995,7 @@ graficoNor &lt;-
         {
           "field": "Alc1",
           "format": ".5s",
-          "title": "Alcance 1 (ton. de CO2)",
+          "title": "Alcance 1 (Ton. CO2)",
           "type": "quantitative"
         }
       ],
@@ -3042,9 +3041,15 @@ graficoTot &lt;-
     ),
     x = alt$X(
       &quot;Alc1:Q&quot;, 
-      axis = alt$Axis(title = &quot;Emisiones dequivalentes a toneladas de CO2&quot;)
+      axis = alt$Axis(title = &quot;Emisiones equivalentes a toneladas de CO2&quot;)
     ),
-    color = alt$condition(seleccion, &quot;Sector&quot;, alt$value(&quot;lightgray&quot;))
+    color = alt$condition(seleccion, &quot;Sector&quot;, alt$value(&quot;lightgray&quot;)),
+    tooltip = list(
+      alt$Tooltip(field = &quot;Alc1&quot;,
+                  type = &quot;quantitative&quot;,
+                  title = &quot;Alcance 1 (Ton. CO2)&quot;,
+                  format = &quot;.5s&quot;)
+    )
   )$
   properties(selection = seleccion)
 
@@ -3055,15 +3060,26 @@ graficoEsp &lt;-
   encode(
     y = alt$Y(
       &quot;Esp&quot;,
-      axis = alt$Axis(title = &quot;&quot;)
+      axis = alt$Axis(title = &quot;&quot;),
+      sort = alt$EncodingSortField(
+        field = &quot;Alc1&quot;,
+        order = &quot;descending&quot;,
+        op = &quot;sum&quot;)
     ),
     x = alt$X(
       &quot;Alc1:Q&quot;,
-      axis = alt$Axis(title = &quot;Emisiones dequivalentes a toneladas de CO2&quot;)
+      axis = alt$Axis(title = &quot;Emisiones equivalentes a toneladas de CO2&quot;)
     ),
     color = alt$Color(
       &quot;Sector:N&quot;,
-      title = &quot;Sectores generales&quot;)
+      title = &quot;Sectores generales&quot;),
+    tooltip = list(
+      alt$Tooltip(field = &quot;Alc1&quot;,
+                  type = &quot;quantitative&quot;,
+                  aggregate = &quot;sum&quot;,
+                  title = &quot;Alcance 1 (Ton. CO2)&quot;,
+                  format = &quot;.5s&quot;)
+    )
   )$
   transform_filter(seleccion$ref())
 
@@ -3075,8 +3091,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   configure_legend(labelLimit= 0)
 
 grafCompuesto</code></pre>
-<div id="htmlwidget-b958608a3e0cb03ea5a2" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b958608a3e0cb03ea5a2">{"x":{
+<div id="htmlwidget-0ff5495fa07a83b0e27f" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0ff5495fa07a83b0e27f">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3800,9 +3816,17 @@ grafCompuesto</code></pre>
             },
             "value": "lightgray"
           },
+          "tooltip": [
+            {
+              "field": "Alc1",
+              "format": ".5s",
+              "title": "Alcance 1 (Ton. CO2)",
+              "type": "quantitative"
+            }
+          ],
           "x": {
             "axis": {
-              "title": "Emisiones dequivalentes a toneladas de CO2"
+              "title": "Emisiones equivalentes a toneladas de CO2"
             },
             "field": "Alc1",
             "type": "quantitative"
@@ -3835,9 +3859,18 @@ grafCompuesto</code></pre>
             "title": "Sectores generales",
             "type": "nominal"
           },
+          "tooltip": [
+            {
+              "aggregate": "sum",
+              "field": "Alc1",
+              "format": ".5s",
+              "title": "Alcance 1 (Ton. CO2)",
+              "type": "quantitative"
+            }
+          ],
           "x": {
             "axis": {
-              "title": "Emisiones dequivalentes a toneladas de CO2"
+              "title": "Emisiones equivalentes a toneladas de CO2"
             },
             "field": "Alc1",
             "type": "quantitative"
@@ -3847,6 +3880,11 @@ grafCompuesto</code></pre>
               "title": ""
             },
             "field": "Esp",
+            "sort": {
+              "field": "Alc1",
+              "op": "sum",
+              "order": "descending"
+            },
             "type": "nominal"
           }
         },
@@ -3879,7 +3917,11 @@ graficoEsp &lt;-
   encode(
     y = alt$Y(
       &quot;Esp&quot;,
-      axis = alt$Axis(title = &quot;&quot;)
+      axis = alt$Axis(title = &quot;&quot;),
+      sort = alt$EncodingSortField(
+        field = &quot;Alc1&quot;,
+        order = &quot;descending&quot;,
+        op = &quot;sum&quot;)
     ),
     x = alt$X(
       &quot;Alc1:Q&quot;,
@@ -3908,8 +3950,8 @@ graficoSec &lt;-
 grafico &lt;- (graficoSec &amp; graficoEsp)$configure_axis(labelLimit=10000)
 
 grafico</code></pre>
-<div id="htmlwidget-725375bc2f1684805da0" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-725375bc2f1684805da0">{"x":{
+<div id="htmlwidget-0348c50551b4561607a3" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0348c50551b4561607a3">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4671,6 +4713,11 @@ grafico</code></pre>
               "title": ""
             },
             "field": "Esp",
+            "sort": {
+              "field": "Alc1",
+              "op": "sum",
+              "order": "descending"
+            },
             "type": "nominal"
           }
         },
@@ -4693,6 +4740,8 @@ grafico</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
+<hr />
+<p><img src="https://i.creativecommons.org/l/by-nc/3.0/88x31.png" /></p>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

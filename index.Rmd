@@ -79,9 +79,9 @@ tablaGeneralIni %>%
     sumTot = sumAlc1 + sumAlc2) %>% 
   filter(sumTot != 0)
 ```
-Notese que existen varios sectores específicos con cero emisiones tanto en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.
+Notese que existen varios sectores específicos con cero emisiones en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.
 
-Para la claridad de los gráficos, eliminamos esos sectores específicos sin emisiones en ninguno de los dos alcances.
+Para la claridad de los gráficos, eliminamos esos sectores específicos sin emisiones en ninguno de los alcances.
 
 ```{r}
 tablaGeneral <- tablaGeneralIni %>%
@@ -114,7 +114,7 @@ dsn_prov <- "WFS:http://geos.snitcr.go.cr/be/IGN_5/wfs?"
 ogrListLayers(dsn_prov) #lista de capas en ese WFS
 ```
 
-Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y transformamos al sistema de coordenadas WGS84:
+Descargamos el límite cantonal, cortamos a la extensión de Costa Rica continental y la transformamos al sistema de coordenadas WGS84 (crs = 4326):
 
 ```{r}
 library(rmapshaper)
@@ -126,13 +126,12 @@ cantones_geo <- ms_simplify(ms_simplify(cantones_geo)) #simplificación de polí
   
 ```
 
-Ya que Altair no trabaja con objetos de clase *sf*, debemos convertir los cantones a geoJSON/topoJSON:
+Ya que Altair no trabaja con objetos de clase *sf*, debemos convertir los cantones a geoJSON/topoJSON. Esto lo haremos con el paquete *geojsonio*:
 
 ```{r}
 library(geojsonio)
 
 cantonesJSON <- geojson_json(cantones_geo)
-
 cantonesJSONEstudio <- 
   geojson_json(cantones_geo %>% 
                  select(nom_cant, SHAPE) %>% 
@@ -204,7 +203,7 @@ mapa
 
 ### Visualizaciones por cantón:
 
-Total de emisiones de los tres alcances por cantón:
+Acumulado de emisiones de los tres alcances por cantón:
 
 ```{r}
 totalesCanton <- tablaGeneral %>% 
@@ -238,7 +237,7 @@ graficoAlcs <-
                   title = "Tipo"),
       alt$Tooltip(field = "totalAlc",
                   type = "quantitative",
-                  title = "Total de emisiones",
+                  title = "Emisiones (ton. de CO2)",
                   format = ".5s")
     )
   )
@@ -273,7 +272,7 @@ graficoTotAlc1 <-
                   title = "Sector específico"),
       alt$Tooltip(field = "Alc1",
                   type = "quantitative",
-                  title = "Alcance 1 (equiv. a ton. de CO2)",
+                  title = "Alcance 1 (Ton. de CO2)",
                   format = ".5s")
     )
   )$configure_legend(labelLimit= 0)
@@ -299,7 +298,7 @@ graficoNor <-
       axis = alt$Axis(title = "")
       ),
     color = "Sector",
-        tooltip = list(
+    tooltip = list(
       alt$Tooltip(field = "Sector",
                   type = "nominal",
                   title = "Sector general"),
@@ -308,7 +307,7 @@ graficoNor <-
                   title = "Sector específico"),
       alt$Tooltip(field = "Alc1",
                   type = "quantitative",
-                  title = "Alcance 1 (ton. de CO2)",
+                  title = "Alcance 1 (Ton. CO2)",
                   format = ".5s")
       )
   )$configure_legend(labelLimit= 0)
@@ -334,9 +333,15 @@ graficoTot <-
     ),
     x = alt$X(
       "Alc1:Q", 
-      axis = alt$Axis(title = "Emisiones dequivalentes a toneladas de CO2")
+      axis = alt$Axis(title = "Emisiones equivalentes a toneladas de CO2")
     ),
-    color = alt$condition(seleccion, "Sector", alt$value("lightgray"))
+    color = alt$condition(seleccion, "Sector", alt$value("lightgray")),
+    tooltip = list(
+      alt$Tooltip(field = "Alc1",
+                  type = "quantitative",
+                  title = "Alcance 1 (Ton. CO2)",
+                  format = ".5s")
+    )
   )$
   properties(selection = seleccion)
 
@@ -347,15 +352,26 @@ graficoEsp <-
   encode(
     y = alt$Y(
       "Esp",
-      axis = alt$Axis(title = "")
+      axis = alt$Axis(title = ""),
+      sort = alt$EncodingSortField(
+        field = "Alc1",
+        order = "descending",
+        op = "sum")
     ),
     x = alt$X(
       "Alc1:Q",
-      axis = alt$Axis(title = "Emisiones dequivalentes a toneladas de CO2")
+      axis = alt$Axis(title = "Emisiones equivalentes a toneladas de CO2")
     ),
     color = alt$Color(
       "Sector:N",
-      title = "Sectores generales")
+      title = "Sectores generales"),
+    tooltip = list(
+      alt$Tooltip(field = "Alc1",
+                  type = "quantitative",
+                  aggregate = "sum",
+                  title = "Alcance 1 (Ton. CO2)",
+                  format = ".5s")
+    )
   )$
   transform_filter(seleccion$ref())
 
@@ -381,7 +397,11 @@ graficoEsp <-
   encode(
     y = alt$Y(
       "Esp",
-      axis = alt$Axis(title = "")
+      axis = alt$Axis(title = ""),
+      sort = alt$EncodingSortField(
+        field = "Alc1",
+        order = "descending",
+        op = "sum")
     ),
     x = alt$X(
       "Alc1:Q",
@@ -424,3 +444,6 @@ Cálculo de emisiones condicionadas según las áreas de cada cantón:
 ```{r}
 
 ```
+
+***
+![](https://i.creativecommons.org/l/by-nc/3.0/88x31.png)
