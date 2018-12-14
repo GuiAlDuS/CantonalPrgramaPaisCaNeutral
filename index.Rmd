@@ -87,7 +87,7 @@ Los gráficos se generarán con la libraría Altair, utilizando la interface de 
 
 El mapa con ubicación de los cantones se hará utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(sf)
 library(gdalUtils)
 library(rgdal)
