@@ -984,12 +984,17 @@ library(tidyverse)</code></pre>
 <pre class="r"><code>
 tablaGeneralIni &lt;- read_csv(&quot;TablaGeneralCantones.csv&quot;)</code></pre>
 </div>
-<p>La tabla tabla cuenta con siete columnas:</p>
+<p>La tabla cuenta con siete columnas:</p>
 <ul>
-<li><p><em>aNo</em>: es el año en que se tomaron las mediciones</p></li>
-<li><p><em>Canton</em>: cantón que reporta</p></li>
-<li><p><em>Sector</em>: sector energético</p></li>
+<li><em>aNo</em>: el año del reporte.</li>
+<li><em>Canton</em>: cantón que reporta.</li>
+<li><em>Sector</em>: sector general generador de emisiones.</li>
+<li><em>Específico</em>: sector específico generador de emisiones.</li>
+<li><em>Alcance 1 (ton CO2 eq)</em>: Emisiones directas de gases de efecto invernadero (GEI).</li>
+<li><em>Alcance 2 (ton CO2 eq)</em>: Emisiones indirectas de GEI asociadas a la electricidad.</li>
+<li><em>Alcance 3 (ton CO2 eq)</em>: Otras emisiones indirectas.</li>
 </ul>
+<p>En caso de querer profundizar más sobre el significado de los distintos alcances, se recomienda consultar el <a href="http://c40-production-images.s3.amazonaws.com/other_uploads/images/1016_GPC_Full_MASTER_v6_ESXM-02-02_FINALpdf.original.pdf?1486373653"><strong>Protocolo de gases de efecto invernadero. Estándar corporativo de contabilidad y reporte</strong></a>.</p>
 <p>Corrección de nombres de columnas y tipos de datos en las columnas:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -1006,21 +1011,7 @@ tablaGeneralIni &lt;- tablaGeneralIni %&gt;%
   )</code></pre>
 </div>
 <h3 id="resumen-de-variables">Resumen de variables:</h3>
-<p>Total de Sectores generales:</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre class="r"><code>
-tablaGeneralIni %&gt;% group_by(Sector) %&gt;% summarise()</code></pre>
-<pre><code>
-# A tibble: 5 x 1
-  Sector                                             
-  &lt;chr&gt;                                              
-1 Agricultura, Silvicultura y Otros Usos de la Tierra
-2 Energía Estacionaria                               
-3 Procesos Industriales y Uso de Productos           
-4 Residuos                                           
-5 Transporte                                         </code></pre>
-</div>
-<p>Número de sectores específicos por sectores generales:</p>
+<p>Sectores generales y número de sectores específicos por cada sector general:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 tablaGeneralIni %&gt;% group_by(Sector, Esp) %&gt;% summarise() %&gt;% group_by(Sector) %&gt;% summarise(n())</code></pre>
@@ -1134,7 +1125,8 @@ cantonesJSONEstudio &lt;-
                  right_join(tablaGeneral %&gt;% 
                               group_by(Canton) %&gt;% 
                               summarise(Alc1 = round(sum(Alc1, na.rm = T), 0),
-                                        Alc2 = round(sum(Alc2, na.rm = T), 0)), 
+                                        Alc2 = round(sum(Alc2, na.rm = T), 0),
+                                        Alc3 = round(sum(Alc3, na.rm = T), 0)), 
                             by = c(&quot;nom_cant&quot; = &quot;Canton&quot;))
   )</code></pre>
 </div>
@@ -1174,15 +1166,15 @@ mapaCantones &lt;-
                   title = &quot;Cantón&quot;),
       alt$Tooltip(field = &quot;properties.Alc1&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 1 (equivalente a toneladas de CO2)&quot;,
+                  title = &quot;Alcance 1 (ton. de CO2)&quot;,
                   format = &quot;.5s&quot;),
       alt$Tooltip(field = &quot;properties.Alc2&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 2 (equivalente a toneladas de CO2)&quot;,
+                  title = &quot;Alcance 2 (ton. de CO2)&quot;,
                   format = &quot;.3s&quot;),
             alt$Tooltip(field = &quot;properties.Alc3&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 3 (equivalente a toneladas de CO2)&quot;,
+                  title = &quot;Alcance 3 (ton. de CO2)&quot;,
                   format = &quot;.3s&quot;)
       )
   )
@@ -1192,8 +1184,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0)
 
 mapa</code></pre>
-<div id="htmlwidget-c7742dce067bf2c053e8" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c7742dce067bf2c053e8">{"x":{
+<div id="htmlwidget-3a9ed8ed761d135fb035" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3a9ed8ed761d135fb035">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1228,7 +1220,7 @@ mapa</code></pre>
             "property": "features",
             "type": "json"
           },
-          "values": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"Belén\",\"Alc1\":382671,\"Alc2\":16853},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-84.1737804,10.0050158],[-84.1647952,9.9904222],[-84.1556885,9.9688545],[-84.1803366,9.9685718],[-84.1836409,9.9721706],[-84.1985027,9.9912711],[-84.1737804,10.0050158]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"Desamparados\",\"Alc1\":117976,\"Alc2\":11008},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-84.0472346,9.9040717],[-84.0302567,9.8962106],[-84.0369388,9.8877762],[-83.9983597,9.8763804],[-84.0184276,9.8514865],[-84.0300375,9.8257134],[-84.0709833,9.8061832],[-84.0875434,9.7681008],[-84.0711642,9.7636741],[-84.0291972,9.7647475],[-84.0209611,9.7703964],[-83.9917473,9.783333],[-83.9815947,9.7701106],[-83.9750387,9.7433456],[-83.9513066,9.7398076],[-83.9489982,9.7139693],[-83.9568018,9.7331582],[-83.9867274,9.7393667],[-84.0027889,9.7369448],[-84.0528836,9.7440037],[-84.0730352,9.7402873],[-84.0950605,9.7510295],[-84.1082837,9.7612916],[-84.0890237,9.8046916],[-84.0822207,9.8308293],[-84.0650696,9.8349325],[-84.0693987,9.8511094],[-84.0605068,9.8630438],[-84.1041065,9.8750526],[-84.0841783,9.8857784],[-84.0913144,9.9012808],[-84.0740144,9.9082006],[-84.0472346,9.9040717]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"Golfito\",\"Alc1\":42346,\"Alc2\":0},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-83.6508954,8.526577],[-83.6308011,8.5254788],[-83.6126736,8.5489831],[-83.5961254,8.5609025],[-83.6422533,8.5923686],[-83.6275399,8.6293353],[-83.6066812,8.6244147],[-83.595239,8.6112987],[-83.5720208,8.6076236],[-83.5559432,8.5957173],[-83.5222506,8.5877577],[-83.4863851,8.6162254],[-83.484719,8.6699148],[-83.4675442,8.6929949],[-83.4343657,8.6581353],[-83.4367667,8.6342962],[-83.3969706,8.5909602],[-83.3741654,8.5756222],[-83.3240876,8.571065],[-83.3074618,8.5429187],[-83.2847801,8.5330019],[-83.2913313,8.4959746],[-83.2717693,8.4649796],[-83.2844419,8.4462249],[-83.2729157,8.4301759],[-83.2908023,8.3749794],[-83.4495864,8.4392944],[-83.513184,8.4487378],[-83.5455379,8.4398394],[-83.570243,8.4448053],[-83.586034,8.4569837],[-83.6098336,8.492984],[-83.6508954,8.526577]]],[[[-83.0739137,8.7763718],[-83.0474265,8.7769997],[-83.0291208,8.7885946],[-82.9940172,8.7857336],[-82.9739242,8.7765238],[-82.9843027,8.7379449],[-82.980048,8.7257794],[-82.9888637,8.7024774],[-83.0094318,8.6790268],[-83.0013675,8.6495747],[-83.0016338,8.5825752],[-83.0540655,8.5398149],[-83.019975,8.5205961],[-83.0087991,8.5051398],[-82.9963286,8.4569994],[-83.0148395,8.424827],[-83.041358,8.3994726],[-83.0417619,8.3790922],[-83.0511687,8.3602186],[-83.0475724,8.3419338],[-83.0516217,8.3308391],[-83.0198913,8.3023239],[-83.0055882,8.2965733],[-82.9906146,8.2712527],[-82.9754213,8.2885431],[-82.9424488,8.2719272],[-82.9324294,8.2490201],[-82.9367468,8.2201648],[-82.9104062,8.1955508],[-82.9101112,8.1538549],[-82.9012481,8.1290483],[-82.8864629,8.1090433],[-82.8877691,8.0769173],[-82.9025991,8.080365],[-82.9022756,8.1115315],[-82.9235543,8.1483219],[-82.9322794,8.1768888],[-82.9463227,8.2006412],[-82.9837723,8.2519323],[-83.0239912,8.277897],[-83.0450919,8.295996],[-83.1094608,8.3310173],[-83.1465069,8.3672187],[-83.1453045,8.3823492],[-83.1316159,8.4033417],[-83.1108974,8.4142548],[-83.0929236,8.4528255],[-83.1051264,8.4781507],[-83.1405492,8.5231717],[-83.1335505,8.5495551],[-83.1597715,8.5713965],[-83.1228885,8.5975512],[-83.1716741,8.6428886],[-83.1822315,8.6218528],[-83.2246471,8.6411207],[-83.243647,8.6329011],[-83.2543355,8.6568861],[-83.2922115,8.6571178],[-83.3082277,8.6737584],[-83.3273805,8.6787185],[-83.332409,8.7194977],[-83.3220544,8.7272717],[-83.3002312,8.7250957],[-83.287618,8.7580971],[-83.2357589,8.7743443],[-83.2258276,8.7601751],[-83.1848409,8.7362012],[-83.1772305,8.7403776],[-83.1737272,8.7788694],[-83.162567,8.8147767],[-83.1576972,8.8030239],[-83.1345416,8.7886128],[-83.0959737,8.7750536],[-83.0739137,8.7763718]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"La Unión\",\"Alc1\":111329,\"Alc2\":7412},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-83.9983597,9.8763804],[-84.0369388,9.8877762],[-84.0302567,9.8962106],[-84.0054299,9.9241775],[-84.0078603,9.9380036],[-83.9690831,9.9434048],[-83.9565613,9.9495287],[-83.9544968,9.9029821],[-83.961115,9.8920466],[-83.9983597,9.8763804]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"San José\",\"Alc1\":988331,\"Alc2\":49329},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-84.1556885,9.9688545],[-84.1094544,9.9612423],[-84.1070155,9.9601319],[-84.0784565,9.9415792],[-84.0608292,9.9394276],[-84.0468177,9.924908],[-84.0472346,9.9040717],[-84.0740144,9.9082006],[-84.0913144,9.9012808],[-84.1212135,9.9299412],[-84.1689828,9.9643294],[-84.1803366,9.9685718],[-84.1556885,9.9688545]]]]}}]}"
+          "values": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"Belén\",\"Alc1\":382671,\"Alc2\":16853,\"Alc3\":10843},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-84.1737804,10.0050158],[-84.1647952,9.9904222],[-84.1556885,9.9688545],[-84.1803366,9.9685718],[-84.1836409,9.9721706],[-84.1985027,9.9912711],[-84.1737804,10.0050158]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"Desamparados\",\"Alc1\":117976,\"Alc2\":11008,\"Alc3\":64670},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-84.0472346,9.9040717],[-84.0302567,9.8962106],[-84.0369388,9.8877762],[-83.9983597,9.8763804],[-84.0184276,9.8514865],[-84.0300375,9.8257134],[-84.0709833,9.8061832],[-84.0875434,9.7681008],[-84.0711642,9.7636741],[-84.0291972,9.7647475],[-84.0209611,9.7703964],[-83.9917473,9.783333],[-83.9815947,9.7701106],[-83.9750387,9.7433456],[-83.9513066,9.7398076],[-83.9489982,9.7139693],[-83.9568018,9.7331582],[-83.9867274,9.7393667],[-84.0027889,9.7369448],[-84.0528836,9.7440037],[-84.0730352,9.7402873],[-84.0950605,9.7510295],[-84.1082837,9.7612916],[-84.0890237,9.8046916],[-84.0822207,9.8308293],[-84.0650696,9.8349325],[-84.0693987,9.8511094],[-84.0605068,9.8630438],[-84.1041065,9.8750526],[-84.0841783,9.8857784],[-84.0913144,9.9012808],[-84.0740144,9.9082006],[-84.0472346,9.9040717]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"Golfito\",\"Alc1\":42346,\"Alc2\":0,\"Alc3\":6555},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-83.6508954,8.526577],[-83.6308011,8.5254788],[-83.6126736,8.5489831],[-83.5961254,8.5609025],[-83.6422533,8.5923686],[-83.6275399,8.6293353],[-83.6066812,8.6244147],[-83.595239,8.6112987],[-83.5720208,8.6076236],[-83.5559432,8.5957173],[-83.5222506,8.5877577],[-83.4863851,8.6162254],[-83.484719,8.6699148],[-83.4675442,8.6929949],[-83.4343657,8.6581353],[-83.4367667,8.6342962],[-83.3969706,8.5909602],[-83.3741654,8.5756222],[-83.3240876,8.571065],[-83.3074618,8.5429187],[-83.2847801,8.5330019],[-83.2913313,8.4959746],[-83.2717693,8.4649796],[-83.2844419,8.4462249],[-83.2729157,8.4301759],[-83.2908023,8.3749794],[-83.4495864,8.4392944],[-83.513184,8.4487378],[-83.5455379,8.4398394],[-83.570243,8.4448053],[-83.586034,8.4569837],[-83.6098336,8.492984],[-83.6508954,8.526577]]],[[[-83.0739137,8.7763718],[-83.0474265,8.7769997],[-83.0291208,8.7885946],[-82.9940172,8.7857336],[-82.9739242,8.7765238],[-82.9843027,8.7379449],[-82.980048,8.7257794],[-82.9888637,8.7024774],[-83.0094318,8.6790268],[-83.0013675,8.6495747],[-83.0016338,8.5825752],[-83.0540655,8.5398149],[-83.019975,8.5205961],[-83.0087991,8.5051398],[-82.9963286,8.4569994],[-83.0148395,8.424827],[-83.041358,8.3994726],[-83.0417619,8.3790922],[-83.0511687,8.3602186],[-83.0475724,8.3419338],[-83.0516217,8.3308391],[-83.0198913,8.3023239],[-83.0055882,8.2965733],[-82.9906146,8.2712527],[-82.9754213,8.2885431],[-82.9424488,8.2719272],[-82.9324294,8.2490201],[-82.9367468,8.2201648],[-82.9104062,8.1955508],[-82.9101112,8.1538549],[-82.9012481,8.1290483],[-82.8864629,8.1090433],[-82.8877691,8.0769173],[-82.9025991,8.080365],[-82.9022756,8.1115315],[-82.9235543,8.1483219],[-82.9322794,8.1768888],[-82.9463227,8.2006412],[-82.9837723,8.2519323],[-83.0239912,8.277897],[-83.0450919,8.295996],[-83.1094608,8.3310173],[-83.1465069,8.3672187],[-83.1453045,8.3823492],[-83.1316159,8.4033417],[-83.1108974,8.4142548],[-83.0929236,8.4528255],[-83.1051264,8.4781507],[-83.1405492,8.5231717],[-83.1335505,8.5495551],[-83.1597715,8.5713965],[-83.1228885,8.5975512],[-83.1716741,8.6428886],[-83.1822315,8.6218528],[-83.2246471,8.6411207],[-83.243647,8.6329011],[-83.2543355,8.6568861],[-83.2922115,8.6571178],[-83.3082277,8.6737584],[-83.3273805,8.6787185],[-83.332409,8.7194977],[-83.3220544,8.7272717],[-83.3002312,8.7250957],[-83.287618,8.7580971],[-83.2357589,8.7743443],[-83.2258276,8.7601751],[-83.1848409,8.7362012],[-83.1772305,8.7403776],[-83.1737272,8.7788694],[-83.162567,8.8147767],[-83.1576972,8.8030239],[-83.1345416,8.7886128],[-83.0959737,8.7750536],[-83.0739137,8.7763718]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"La Unión\",\"Alc1\":111329,\"Alc2\":7412,\"Alc3\":35575},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-83.9983597,9.8763804],[-84.0369388,9.8877762],[-84.0302567,9.8962106],[-84.0054299,9.9241775],[-84.0078603,9.9380036],[-83.9690831,9.9434048],[-83.9565613,9.9495287],[-83.9544968,9.9029821],[-83.961115,9.8920466],[-83.9983597,9.8763804]]]]}},{\"type\":\"Feature\",\"properties\":{\"nom_cant\":\"San José\",\"Alc1\":988331,\"Alc2\":49329,\"Alc3\":79128},\"geometry\":{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-84.1556885,9.9688545],[-84.1094544,9.9612423],[-84.1070155,9.9601319],[-84.0784565,9.9415792],[-84.0608292,9.9394276],[-84.0468177,9.924908],[-84.0472346,9.9040717],[-84.0740144,9.9082006],[-84.0913144,9.9012808],[-84.1212135,9.9299412],[-84.1689828,9.9643294],[-84.1803366,9.9685718],[-84.1556885,9.9688545]]]]}}]}"
         },
         "encoding": {
           "color": {
@@ -1248,19 +1240,19 @@ mapa</code></pre>
             {
               "field": "properties.Alc1",
               "format": ".5s",
-              "title": "Alcance 1 (equivalente a toneladas de CO2)",
+              "title": "Alcance 1 (ton. de CO2)",
               "type": "quantitative"
             },
             {
               "field": "properties.Alc2",
               "format": ".3s",
-              "title": "Alcance 2 (equivalente a toneladas de CO2)",
+              "title": "Alcance 2 (ton. de CO2)",
               "type": "quantitative"
             },
             {
               "field": "properties.Alc3",
               "format": ".3s",
-              "title": "Alcance 3 (equivalente a toneladas de CO2)",
+              "title": "Alcance 3 (ton. de CO2)",
               "type": "quantitative"
             }
           ]
@@ -1276,7 +1268,7 @@ mapa</code></pre>
 },"evals":[],"jsHooks":[]}</script>
 </div>
 <h3 id="visualizaciones-por-canton">Visualizaciones por cantón:</h3>
-Total de emisiones de los tres alcances por cantón:
+<p>Total de emisiones de los tres alcances por cantón:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 totalesCanton &lt;- tablaGeneral %&gt;% 
@@ -1293,7 +1285,7 @@ graficoAlcs &lt;-
   encode(
     x = alt$X(
       &quot;totalAlc:Q&quot;,
-      axis = alt$Axis(title = &quot;Emisiones equivalentes a toneladas de CO2&quot;)
+      axis = alt$Axis(title = &quot;Equivalente a toneladas de CO2&quot;)
     ),
     y = alt$Y(
       &quot;Canton&quot;,
@@ -1305,16 +1297,19 @@ graficoAlcs &lt;-
       scale=alt$Scale(scheme=&quot;Category10&quot;)
     ),
     tooltip = list(
+      alt$Tooltip(field = &quot;tipoAlc&quot;,
+                  type = &quot;nominal&quot;,
+                  title = &quot;Tipo&quot;),
       alt$Tooltip(field = &quot;totalAlc&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Total de emisiones por alcance&quot;,
+                  title = &quot;Total de emisiones&quot;,
                   format = &quot;.5s&quot;)
     )
   )
 
 graficoAlcs  </code></pre>
-<div id="htmlwidget-5bc6531e0276fb2ecf90" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5bc6531e0276fb2ecf90">{"x":{
+<div id="htmlwidget-039401634cb38e858146" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-039401634cb38e858146">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1418,15 +1413,20 @@ graficoAlcs  </code></pre>
       },
       "tooltip": [
         {
+          "field": "tipoAlc",
+          "title": "Tipo",
+          "type": "nominal"
+        },
+        {
           "field": "totalAlc",
           "format": ".5s",
-          "title": "Total de emisiones por alcance",
+          "title": "Total de emisiones",
           "type": "quantitative"
         }
       ],
       "x": {
         "axis": {
-          "title": "Emisiones equivalentes a toneladas de CO2"
+          "title": "Equivalente a toneladas de CO2"
         },
         "field": "totalAlc",
         "type": "quantitative"
@@ -1472,14 +1472,14 @@ graficoTotAlc1 &lt;-
                   title = &quot;Sector específico&quot;),
       alt$Tooltip(field = &quot;Alc1&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 1 (equivalente a toneladas de CO2)&quot;,
+                  title = &quot;Alcance 1 (equiv. a ton. de CO2)&quot;,
                   format = &quot;.5s&quot;)
     )
   )$configure_legend(labelLimit= 0)
 
 graficoTotAlc1</code></pre>
-<div id="htmlwidget-ef904ab3c6c8003a6b17" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ef904ab3c6c8003a6b17">{"x":{
+<div id="htmlwidget-69b96bf17b3b70fa90bc" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-69b96bf17b3b70fa90bc">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2207,7 +2207,7 @@ graficoTotAlc1</code></pre>
         {
           "field": "Alc1",
           "format": ".5s",
-          "title": "Alcance 1 (equivalente a toneladas de CO2)",
+          "title": "Alcance 1 (equiv. a ton. de CO2)",
           "type": "quantitative"
         }
       ],
@@ -2261,18 +2261,14 @@ graficoNor &lt;-
                   title = &quot;Sector específico&quot;),
       alt$Tooltip(field = &quot;Alc1&quot;,
                   type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 1 (equivalente a toneladas de CO2)&quot;,
-                  format = &quot;.5s&quot;),
-      alt$Tooltip(field = &quot;Alc2&quot;,
-                  type = &quot;quantitative&quot;,
-                  title = &quot;Alcance 2 (equivalente a toneladas de CO2)&quot;,
-                  format = &quot;.3s&quot;)
+                  title = &quot;Alcance 1 (ton. de CO2)&quot;,
+                  format = &quot;.5s&quot;)
       )
   )$configure_legend(labelLimit= 0)
 
  graficoNor</code></pre>
-<div id="htmlwidget-3e223d3f3a8d75cbf90e" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3e223d3f3a8d75cbf90e">{"x":{
+<div id="htmlwidget-d1d6b481f0d7144c176e" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d1d6b481f0d7144c176e">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3000,13 +2996,7 @@ graficoNor &lt;-
         {
           "field": "Alc1",
           "format": ".5s",
-          "title": "Alcance 1 (equivalente a toneladas de CO2)",
-          "type": "quantitative"
-        },
-        {
-          "field": "Alc2",
-          "format": ".3s",
-          "title": "Alcance 2 (equivalente a toneladas de CO2)",
+          "title": "Alcance 1 (ton. de CO2)",
           "type": "quantitative"
         }
       ],
@@ -3028,6 +3018,849 @@ graficoNor &lt;-
       }
     },
     "mark": "bar"
+  },
+  "embed_options": {
+    "defaultStyle": true,
+    "renderer": "canvas"
+  }
+},"evals":[],"jsHooks":[]}</script>
+</div>
+<p>Dadas las opciones de interactividad que brinda <strong>Altair</strong> haremos un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores de emisión por sector específico.</p>
+<p>El código sería el siguiente:</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+seleccion &lt;- alt$selection(type = &quot;single&quot;, 
+                           encodings = list(&quot;y&quot;))
+
+graficoTot &lt;- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = alt$Y(
+      &quot;Canton&quot;,
+      axis = alt$Axis(title = &quot;&quot;)
+    ),
+    x = alt$X(
+      &quot;Alc1:Q&quot;, 
+      axis = alt$Axis(title = &quot;Emisiones dequivalentes a toneladas de CO2&quot;)
+    ),
+    color = alt$condition(seleccion, &quot;Sector&quot;, alt$value(&quot;lightgray&quot;))
+  )$
+  properties(selection = seleccion)
+
+graficoEsp &lt;- 
+  alt$Chart(tablaGeneral,
+            title = &quot;Sectores específicos&quot;)$
+  mark_bar()$
+  encode(
+    y = alt$Y(
+      &quot;Esp&quot;,
+      axis = alt$Axis(title = &quot;&quot;)
+    ),
+    x = alt$X(
+      &quot;Alc1:Q&quot;,
+      axis = alt$Axis(title = &quot;Emisiones dequivalentes a toneladas de CO2&quot;)
+    ),
+    color = alt$Color(
+      &quot;Sector:N&quot;,
+      title = &quot;Sectores generales&quot;)
+  )$
+  transform_filter(seleccion$ref())
+
+grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
+  properties(
+    title = &quot;Emisiones de Alcance 1 por sectores según cantón&quot;
+  )$
+  configure_axis(labelLimit=10000)$
+  configure_legend(labelLimit= 0)
+
+grafCompuesto</code></pre>
+<div id="htmlwidget-b958608a3e0cb03ea5a2" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b958608a3e0cb03ea5a2">{"x":{
+  "chart_spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
+    "config": {
+      "axis": {
+        "labelLimit": 10000
+      },
+      "legend": {
+        "labelLimit": 0
+      },
+      "view": {
+        "height": 300,
+        "width": 400
+      }
+    },
+    "datasets": {
+      "data-f37b2bbf8340007650e5f6740d85ba67": [
+        {
+          "Alc1": 426.0547,
+          "Alc2": 1615.657,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Edificios residenciales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 42707.9049
+        },
+        {
+          "Alc1": 21535.5189,
+          "Alc2": 3981.0326,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Edificios e instalaciones comerciales e institucionales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 189684.8301
+        },
+        {
+          "Alc1": 133548.7505,
+          "Alc2": 11256.5598,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Construcción e industrias manufactureras",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 279395.6288
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 492.7132
+        },
+        {
+          "Alc1": 130517.1838,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Por carretera",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 960369.052
+        },
+        {
+          "Alc1": 124.2467,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Ferroviario",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 1056.0968
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Aviación",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 6592.5041
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": 10843.3093,
+          "Canton": "Belén",
+          "Esp": "Disposición de residuos sólidos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 111885.3418
+        },
+        {
+          "Alc1": 0.2484,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 2221.0993
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 5394.03
+        },
+        {
+          "Alc1": 2768.4917,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Aguas residuales generadas en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 25716.2146
+        },
+        {
+          "Alc1": 93583.5716,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Uso de Productos",
+          "Sector": "Procesos Industriales y Uso de Productos",
+          "aNo": 2017,
+          "sumTot": 93583.5716
+        },
+        {
+          "Alc1": 164.8905,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Ganadería",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 6606.4454
+        },
+        {
+          "Alc1": 2.334,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Belén",
+          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 1550.6077
+        },
+        {
+          "Alc1": 5698.576,
+          "Alc2": 13705.1098,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Edificios residenciales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 42707.9049
+        },
+        {
+          "Alc1": 124261.9726,
+          "Alc2": 29874.2225,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Edificios e instalaciones comerciales e institucionales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 189684.8301
+        },
+        {
+          "Alc1": 119285.512,
+          "Alc2": 5749.6128,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Construcción e industrias manufactureras",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 279395.6288
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 492.7132
+        },
+        {
+          "Alc1": 609943.0524,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Por carretera",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 960369.052
+        },
+        {
+          "Alc1": 652.2951,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Ferroviario",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 1056.0968
+        },
+        {
+          "Alc1": 6592.5041,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Aviación",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 6592.5041
+        },
+        {
+          "Alc1": 111885.3418,
+          "Alc2": null,
+          "Alc3": 79127.7212,
+          "Canton": "San José",
+          "Esp": "Disposición de residuos sólidos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 111885.3418
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 2221.0993
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 5394.03
+        },
+        {
+          "Alc1": 9994.8244,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Aguas residuales generadas en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 25716.2146
+        },
+        {
+          "Alc1": 14.5723,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Ganadería",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 6606.4454
+        },
+        {
+          "Alc1": 2.1974,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "San José",
+          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 1550.6077
+        },
+        {
+          "Alc1": 2233.8862,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Edificios residenciales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 42707.9049
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Edificios e instalaciones comerciales e institucionales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 189684.8301
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Construcción e industrias manufactureras",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 279395.6288
+        },
+        {
+          "Alc1": 0,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 492.7132
+        },
+        {
+          "Alc1": 30420.6051,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Por carretera",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 960369.052
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Ferroviario",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 1056.0968
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Aviación",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 6592.5041
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": 6554.6334,
+          "Canton": "Golfito",
+          "Esp": "Disposición de residuos sólidos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 111885.3418
+        },
+        {
+          "Alc1": 20.779,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 2221.0993
+        },
+        {
+          "Alc1": 5394.03,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 5394.03
+        },
+        {
+          "Alc1": 4277.1461,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Aguas residuales generadas en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 25716.2146
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Uso de Productos",
+          "Sector": "Procesos Industriales y Uso de Productos",
+          "aNo": 2017,
+          "sumTot": 93583.5716
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Ganadería",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 6606.4454
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Golfito",
+          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 1550.6077
+        },
+        {
+          "Alc1": 2097.1031,
+          "Alc2": 4737.4045,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Edificios residenciales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 42707.9049
+        },
+        {
+          "Alc1": 4302.786,
+          "Alc2": 1673.5772,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Edificios e instalaciones comerciales e institucionales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 189684.8301
+        },
+        {
+          "Alc1": 7563.2535,
+          "Alc2": 1000.8956,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Construcción e industrias manufactureras",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 279395.6288
+        },
+        {
+          "Alc1": 492.7132,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 492.7132
+        },
+        {
+          "Alc1": 82730.7508,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Por carretera",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 960369.052
+        },
+        {
+          "Alc1": 279.555,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Ferroviario",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 1056.0968
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Aviación",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 6592.5041
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": 35572.955,
+          "Canton": "La Unión",
+          "Esp": "Disposición de residuos sólidos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 111885.3418
+        },
+        {
+          "Alc1": 541.4131,
+          "Alc2": null,
+          "Alc3": 1.8001,
+          "Canton": "La Unión",
+          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 2221.0993
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 5394.03
+        },
+        {
+          "Alc1": 8153.4185,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Aguas residuales generadas en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 25716.2146
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Uso de Productos",
+          "Sector": "Procesos Industriales y Uso de Productos",
+          "aNo": 2017,
+          "sumTot": 93583.5716
+        },
+        {
+          "Alc1": 3929.8423,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Ganadería",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 6606.4454
+        },
+        {
+          "Alc1": 1238.0831,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "La Unión",
+          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 1550.6077
+        },
+        {
+          "Alc1": 5192.1259,
+          "Alc2": 7001.9877,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Edificios residenciales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 42707.9049
+        },
+        {
+          "Alc1": 1032.2722,
+          "Alc2": 3023.4479,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Edificios e instalaciones comerciales e institucionales",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 189684.8301
+        },
+        {
+          "Alc1": 8.25,
+          "Alc2": 982.7946,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Construcción e industrias manufactureras",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 279395.6288
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
+          "Sector": "Energía Estacionaria",
+          "aNo": 2017,
+          "sumTot": 492.7132
+        },
+        {
+          "Alc1": 106757.4599,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Por carretera",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 960369.052
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Ferroviario",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 1056.0968
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Aviación",
+          "Sector": "Transporte",
+          "aNo": 2017,
+          "sumTot": 6592.5041
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": 64668.6675,
+          "Canton": "Desamparados",
+          "Esp": "Disposición de residuos sólidos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 111885.3418
+        },
+        {
+          "Alc1": 1658.6588,
+          "Alc2": null,
+          "Alc3": 0.9927,
+          "Canton": "Desamparados",
+          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 2221.0993
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 5394.03
+        },
+        {
+          "Alc1": 522.3339,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Aguas residuales generadas en la ciudad",
+          "Sector": "Residuos",
+          "aNo": 2017,
+          "sumTot": 25716.2146
+        },
+        {
+          "Alc1": null,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Uso de Productos",
+          "Sector": "Procesos Industriales y Uso de Productos",
+          "aNo": 2017,
+          "sumTot": 93583.5716
+        },
+        {
+          "Alc1": 2497.1402,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Ganadería",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 6606.4454
+        },
+        {
+          "Alc1": 307.9932,
+          "Alc2": null,
+          "Alc3": null,
+          "Canton": "Desamparados",
+          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
+          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
+          "aNo": 2017,
+          "sumTot": 1550.6077
+        }
+      ]
+    },
+    "title": "Emisiones de Alcance 1 por sectores según cantón",
+    "vconcat": [
+      {
+        "data": {
+          "name": "data-f37b2bbf8340007650e5f6740d85ba67"
+        },
+        "encoding": {
+          "color": {
+            "condition": {
+              "field": "Sector",
+              "selection": "selector001",
+              "type": "nominal"
+            },
+            "value": "lightgray"
+          },
+          "x": {
+            "axis": {
+              "title": "Emisiones dequivalentes a toneladas de CO2"
+            },
+            "field": "Alc1",
+            "type": "quantitative"
+          },
+          "y": {
+            "axis": {
+              "title": ""
+            },
+            "field": "Canton",
+            "type": "nominal"
+          }
+        },
+        "mark": "bar",
+        "selection": {
+          "selector001": {
+            "encodings": [
+              "y"
+            ],
+            "type": "single"
+          }
+        }
+      },
+      {
+        "data": {
+          "name": "data-f37b2bbf8340007650e5f6740d85ba67"
+        },
+        "encoding": {
+          "color": {
+            "field": "Sector",
+            "title": "Sectores generales",
+            "type": "nominal"
+          },
+          "x": {
+            "axis": {
+              "title": "Emisiones dequivalentes a toneladas de CO2"
+            },
+            "field": "Alc1",
+            "type": "quantitative"
+          },
+          "y": {
+            "axis": {
+              "title": ""
+            },
+            "field": "Esp",
+            "type": "nominal"
+          }
+        },
+        "mark": "bar",
+        "title": "Sectores específicos",
+        "transform": [
+          {
+            "filter": {
+              "selection": "selector001"
+            }
+          }
+        ]
+      }
+    ]
   },
   "embed_options": {
     "defaultStyle": true,
@@ -3075,8 +3908,8 @@ graficoSec &lt;-
 grafico &lt;- (graficoSec &amp; graficoEsp)$configure_axis(labelLimit=10000)
 
 grafico</code></pre>
-<div id="htmlwidget-32de5f41c74215a43b11" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-32de5f41c74215a43b11">{"x":{
+<div id="htmlwidget-725375bc2f1684805da0" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-725375bc2f1684805da0">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3843,843 +4676,6 @@ grafico</code></pre>
         },
         "mark": "bar",
         "title": "Sectores específicos"
-      }
-    ]
-  },
-  "embed_options": {
-    "defaultStyle": true,
-    "renderer": "canvas"
-  }
-},"evals":[],"jsHooks":[]}</script>
-</div>
-<p>Dadas las opciones de interactividad que brinda <strong>Altair</strong> vamos a hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.</p>
-<p>El código sería el siguiente:</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre class="r"><code>
-seleccion &lt;- alt$selection(type = &quot;single&quot;, 
-                           encodings = list(&quot;y&quot;))
-
-graficoTot &lt;- 
-  alt$Chart(tablaGeneral)$
-  mark_bar()$
-  encode(
-    y = alt$Y(
-      &quot;Canton&quot;,
-      axis = alt$Axis(title = &quot;&quot;)
-    ),
-    x = alt$X(
-      &quot;Alc1:Q&quot;, 
-      axis = alt$Axis(title = &quot;&quot;)
-    ),
-    color = alt$condition(seleccion, &quot;Sector&quot;, alt$value(&quot;lightgray&quot;))
-  )$
-  properties(selection = seleccion)
-
-graficoEsp &lt;- 
-  alt$Chart(tablaGeneral,
-            title = &quot;Sectores específicos&quot;)$
-  mark_bar()$
-  encode(
-    y = alt$Y(
-      &quot;Esp&quot;,
-      axis = alt$Axis(title = &quot;&quot;)
-    ),
-    x = &quot;Alc1:Q&quot;,
-    color = alt$Color(
-      &quot;Sector:N&quot;,
-      title = &quot;Sectores generales&quot;)
-  )$
-  transform_filter(seleccion$ref())
-
-grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
-  properties(
-    title = &quot;Emisiones de Alcance 1 por sectores según cantón&quot;
-  )$
-  configure_axis(labelLimit=10000)$
-  configure_legend(labelLimit= 0)
-
-grafCompuesto</code></pre>
-<div id="htmlwidget-3dff83b038e07d745f35" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3dff83b038e07d745f35">{"x":{
-  "chart_spec": {
-    "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
-    "config": {
-      "axis": {
-        "labelLimit": 10000
-      },
-      "legend": {
-        "labelLimit": 0
-      },
-      "view": {
-        "height": 300,
-        "width": 400
-      }
-    },
-    "datasets": {
-      "data-f37b2bbf8340007650e5f6740d85ba67": [
-        {
-          "Alc1": 426.0547,
-          "Alc2": 1615.657,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Edificios residenciales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 42707.9049
-        },
-        {
-          "Alc1": 21535.5189,
-          "Alc2": 3981.0326,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Edificios e instalaciones comerciales e institucionales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 189684.8301
-        },
-        {
-          "Alc1": 133548.7505,
-          "Alc2": 11256.5598,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Construcción e industrias manufactureras",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 279395.6288
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 492.7132
-        },
-        {
-          "Alc1": 130517.1838,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Por carretera",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 960369.052
-        },
-        {
-          "Alc1": 124.2467,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Ferroviario",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 1056.0968
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Aviación",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 6592.5041
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": 10843.3093,
-          "Canton": "Belén",
-          "Esp": "Disposición de residuos sólidos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 111885.3418
-        },
-        {
-          "Alc1": 0.2484,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 2221.0993
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 5394.03
-        },
-        {
-          "Alc1": 2768.4917,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Aguas residuales generadas en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 25716.2146
-        },
-        {
-          "Alc1": 93583.5716,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Uso de Productos",
-          "Sector": "Procesos Industriales y Uso de Productos",
-          "aNo": 2017,
-          "sumTot": 93583.5716
-        },
-        {
-          "Alc1": 164.8905,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Ganadería",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 6606.4454
-        },
-        {
-          "Alc1": 2.334,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Belén",
-          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 1550.6077
-        },
-        {
-          "Alc1": 5698.576,
-          "Alc2": 13705.1098,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Edificios residenciales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 42707.9049
-        },
-        {
-          "Alc1": 124261.9726,
-          "Alc2": 29874.2225,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Edificios e instalaciones comerciales e institucionales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 189684.8301
-        },
-        {
-          "Alc1": 119285.512,
-          "Alc2": 5749.6128,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Construcción e industrias manufactureras",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 279395.6288
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 492.7132
-        },
-        {
-          "Alc1": 609943.0524,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Por carretera",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 960369.052
-        },
-        {
-          "Alc1": 652.2951,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Ferroviario",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 1056.0968
-        },
-        {
-          "Alc1": 6592.5041,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Aviación",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 6592.5041
-        },
-        {
-          "Alc1": 111885.3418,
-          "Alc2": null,
-          "Alc3": 79127.7212,
-          "Canton": "San José",
-          "Esp": "Disposición de residuos sólidos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 111885.3418
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 2221.0993
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 5394.03
-        },
-        {
-          "Alc1": 9994.8244,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Aguas residuales generadas en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 25716.2146
-        },
-        {
-          "Alc1": 14.5723,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Ganadería",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 6606.4454
-        },
-        {
-          "Alc1": 2.1974,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "San José",
-          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 1550.6077
-        },
-        {
-          "Alc1": 2233.8862,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Edificios residenciales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 42707.9049
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Edificios e instalaciones comerciales e institucionales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 189684.8301
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Construcción e industrias manufactureras",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 279395.6288
-        },
-        {
-          "Alc1": 0,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 492.7132
-        },
-        {
-          "Alc1": 30420.6051,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Por carretera",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 960369.052
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Ferroviario",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 1056.0968
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Aviación",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 6592.5041
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": 6554.6334,
-          "Canton": "Golfito",
-          "Esp": "Disposición de residuos sólidos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 111885.3418
-        },
-        {
-          "Alc1": 20.779,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 2221.0993
-        },
-        {
-          "Alc1": 5394.03,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 5394.03
-        },
-        {
-          "Alc1": 4277.1461,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Aguas residuales generadas en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 25716.2146
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Uso de Productos",
-          "Sector": "Procesos Industriales y Uso de Productos",
-          "aNo": 2017,
-          "sumTot": 93583.5716
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Ganadería",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 6606.4454
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Golfito",
-          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 1550.6077
-        },
-        {
-          "Alc1": 2097.1031,
-          "Alc2": 4737.4045,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Edificios residenciales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 42707.9049
-        },
-        {
-          "Alc1": 4302.786,
-          "Alc2": 1673.5772,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Edificios e instalaciones comerciales e institucionales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 189684.8301
-        },
-        {
-          "Alc1": 7563.2535,
-          "Alc2": 1000.8956,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Construcción e industrias manufactureras",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 279395.6288
-        },
-        {
-          "Alc1": 492.7132,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 492.7132
-        },
-        {
-          "Alc1": 82730.7508,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Por carretera",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 960369.052
-        },
-        {
-          "Alc1": 279.555,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Ferroviario",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 1056.0968
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Aviación",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 6592.5041
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": 35572.955,
-          "Canton": "La Unión",
-          "Esp": "Disposición de residuos sólidos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 111885.3418
-        },
-        {
-          "Alc1": 541.4131,
-          "Alc2": null,
-          "Alc3": 1.8001,
-          "Canton": "La Unión",
-          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 2221.0993
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 5394.03
-        },
-        {
-          "Alc1": 8153.4185,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Aguas residuales generadas en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 25716.2146
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Uso de Productos",
-          "Sector": "Procesos Industriales y Uso de Productos",
-          "aNo": 2017,
-          "sumTot": 93583.5716
-        },
-        {
-          "Alc1": 3929.8423,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Ganadería",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 6606.4454
-        },
-        {
-          "Alc1": 1238.0831,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "La Unión",
-          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 1550.6077
-        },
-        {
-          "Alc1": 5192.1259,
-          "Alc2": 7001.9877,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Edificios residenciales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 42707.9049
-        },
-        {
-          "Alc1": 1032.2722,
-          "Alc2": 3023.4479,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Edificios e instalaciones comerciales e institucionales",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 189684.8301
-        },
-        {
-          "Alc1": 8.25,
-          "Alc2": 982.7946,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Construcción e industrias manufactureras",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 279395.6288
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Actividades agrícolas, de silvicultura y de pesca",
-          "Sector": "Energía Estacionaria",
-          "aNo": 2017,
-          "sumTot": 492.7132
-        },
-        {
-          "Alc1": 106757.4599,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Por carretera",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 960369.052
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Ferroviario",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 1056.0968
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Aviación",
-          "Sector": "Transporte",
-          "aNo": 2017,
-          "sumTot": 6592.5041
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": 64668.6675,
-          "Canton": "Desamparados",
-          "Esp": "Disposición de residuos sólidos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 111885.3418
-        },
-        {
-          "Alc1": 1658.6588,
-          "Alc2": null,
-          "Alc3": 0.9927,
-          "Canton": "Desamparados",
-          "Esp": "Tratamiento biológico de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 2221.0993
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Incineración y quema a cielo abierto de residuos generados en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 5394.03
-        },
-        {
-          "Alc1": 522.3339,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Aguas residuales generadas en la ciudad",
-          "Sector": "Residuos",
-          "aNo": 2017,
-          "sumTot": 25716.2146
-        },
-        {
-          "Alc1": null,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Uso de Productos",
-          "Sector": "Procesos Industriales y Uso de Productos",
-          "aNo": 2017,
-          "sumTot": 93583.5716
-        },
-        {
-          "Alc1": 2497.1402,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Ganadería",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 6606.4454
-        },
-        {
-          "Alc1": 307.9932,
-          "Alc2": null,
-          "Alc3": null,
-          "Canton": "Desamparados",
-          "Esp": "Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2",
-          "Sector": "Agricultura, Silvicultura y Otros Usos de la Tierra",
-          "aNo": 2017,
-          "sumTot": 1550.6077
-        }
-      ]
-    },
-    "title": "Emisiones de Alcance 1 por sectores según cantón",
-    "vconcat": [
-      {
-        "data": {
-          "name": "data-f37b2bbf8340007650e5f6740d85ba67"
-        },
-        "encoding": {
-          "color": {
-            "condition": {
-              "field": "Sector",
-              "selection": "selector001",
-              "type": "nominal"
-            },
-            "value": "lightgray"
-          },
-          "x": {
-            "axis": {
-              "title": ""
-            },
-            "field": "Alc1",
-            "type": "quantitative"
-          },
-          "y": {
-            "axis": {
-              "title": ""
-            },
-            "field": "Canton",
-            "type": "nominal"
-          }
-        },
-        "mark": "bar",
-        "selection": {
-          "selector001": {
-            "encodings": [
-              "y"
-            ],
-            "type": "single"
-          }
-        }
-      },
-      {
-        "data": {
-          "name": "data-f37b2bbf8340007650e5f6740d85ba67"
-        },
-        "encoding": {
-          "color": {
-            "field": "Sector",
-            "title": "Sectores generales",
-            "type": "nominal"
-          },
-          "x": {
-            "field": "Alc1",
-            "type": "quantitative"
-          },
-          "y": {
-            "axis": {
-              "title": ""
-            },
-            "field": "Esp",
-            "type": "nominal"
-          }
-        },
-        "mark": "bar",
-        "title": "Sectores específicos",
-        "transform": [
-          {
-            "filter": {
-              "selection": "selector001"
-            }
-          }
-        ]
       }
     ]
   },

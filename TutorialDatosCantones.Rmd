@@ -25,13 +25,17 @@ La tabla con los datos de los cantones pueden accederse [acá](https://raw.githu
 tablaGeneralIni <- read_csv("TablaGeneralCantones.csv")
 ```
 
-La tabla tabla cuenta con siete columnas:
+La tabla  cuenta con siete columnas:
 
-- *aNo*: es el año en que se tomaron las mediciones
+- *aNo*: el año del reporte.
+- *Canton*: cantón que reporta.
+- *Sector*: sector general generador de emisiones.
+- *Específico*: sector específico generador de emisiones.
+- *Alcance 1 (ton CO2 eq)*: Emisiones directas de gases de efecto invernadero (GEI).
+- *Alcance 2 (ton CO2 eq)*: Emisiones indirectas de GEI asociadas a la electricidad.
+- *Alcance 3 (ton CO2 eq)*: Otras emisiones indirectas.
 
-- *Canton*: cantón que reporta
-
-- *Sector*: sector energético
+En caso de querer profundizar más sobre el significado de los distintos alcances, se recomienda consultar el [**Protocolo de gases de efecto invernadero. Estándar corporativo de contabilidad y reporte**](http://c40-production-images.s3.amazonaws.com/other_uploads/images/1016_GPC_Full_MASTER_v6_ESXM-02-02_FINALpdf.original.pdf?1486373653).
 
 Corrección de nombres de columnas y tipos de datos en las columnas:
 
@@ -50,13 +54,7 @@ tablaGeneralIni <- tablaGeneralIni %>%
 ```
 
 ### Resumen de variables:
-Total de Sectores generales:
-
-```{r}
-tablaGeneralIni %>% group_by(Sector) %>% summarise()
-```
-
-Número de sectores específicos por sectores generales:
+Sectores generales y número de sectores específicos por cada sector general:
 
 ```{r}
 tablaGeneralIni %>% group_by(Sector, Esp) %>% summarise() %>% group_by(Sector) %>% summarise(n())
@@ -134,7 +132,8 @@ cantonesJSONEstudio <-
                  right_join(tablaGeneral %>% 
                               group_by(Canton) %>% 
                               summarise(Alc1 = round(sum(Alc1, na.rm = T), 0),
-                                        Alc2 = round(sum(Alc2, na.rm = T), 0)), 
+                                        Alc2 = round(sum(Alc2, na.rm = T), 0),
+                                        Alc3 = round(sum(Alc3, na.rm = T), 0)), 
                             by = c("nom_cant" = "Canton"))
   )
 
@@ -176,15 +175,15 @@ mapaCantones <-
                   title = "Cantón"),
       alt$Tooltip(field = "properties.Alc1",
                   type = "quantitative",
-                  title = "Alcance 1 (equivalente a toneladas de CO2)",
+                  title = "Alcance 1 (ton. de CO2)",
                   format = ".5s"),
       alt$Tooltip(field = "properties.Alc2",
                   type = "quantitative",
-                  title = "Alcance 2 (equivalente a toneladas de CO2)",
+                  title = "Alcance 2 (ton. de CO2)",
                   format = ".3s"),
             alt$Tooltip(field = "properties.Alc3",
                   type = "quantitative",
-                  title = "Alcance 3 (equivalente a toneladas de CO2)",
+                  title = "Alcance 3 (ton. de CO2)",
                   format = ".3s")
       )
   )
@@ -196,10 +195,10 @@ mapa <- (mapaBase + mapaCantones)$
 mapa
 ```
 
-
 ### Visualizaciones por cantón:
 
 Total de emisiones de los tres alcances por cantón:
+
 ```{r}
 totalesCanton <- tablaGeneral %>% 
   gather(key = tipoAlc, value = valorAlc, -(1:4), -8) %>% 
@@ -215,7 +214,7 @@ graficoAlcs <-
   encode(
     x = alt$X(
       "totalAlc:Q",
-      axis = alt$Axis(title = "Emisiones equivalentes a toneladas de CO2")
+      axis = alt$Axis(title = "Equivalente a toneladas de CO2")
     ),
     y = alt$Y(
       "Canton",
@@ -227,15 +226,17 @@ graficoAlcs <-
       scale=alt$Scale(scheme="Category10")
     ),
     tooltip = list(
+      alt$Tooltip(field = "tipoAlc",
+                  type = "nominal",
+                  title = "Tipo"),
       alt$Tooltip(field = "totalAlc",
                   type = "quantitative",
-                  title = "Total de emisiones por alcance",
+                  title = "Total de emisiones",
                   format = ".5s")
     )
   )
 
 graficoAlcs  
-
 ```
 
 
@@ -265,7 +266,7 @@ graficoTotAlc1 <-
                   title = "Sector específico"),
       alt$Tooltip(field = "Alc1",
                   type = "quantitative",
-                  title = "Alcance 1 (equivalente a toneladas de CO2)",
+                  title = "Alcance 1 (equiv. a ton. de CO2)",
                   format = ".5s")
     )
   )$configure_legend(labelLimit= 0)
@@ -300,16 +301,65 @@ graficoNor <-
                   title = "Sector específico"),
       alt$Tooltip(field = "Alc1",
                   type = "quantitative",
-                  title = "Alcance 1 (equivalente a toneladas de CO2)",
-                  format = ".5s"),
-      alt$Tooltip(field = "Alc2",
-                  type = "quantitative",
-                  title = "Alcance 2 (equivalente a toneladas de CO2)",
-                  format = ".3s")
+                  title = "Alcance 1 (ton. de CO2)",
+                  format = ".5s")
       )
   )$configure_legend(labelLimit= 0)
 
  graficoNor
+```
+
+Dadas las opciones de interactividad que brinda **Altair**  haremos un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores de emisión por sector específico.
+
+El código sería el siguiente:
+
+```{r}
+seleccion <- alt$selection(type = "single", 
+                           encodings = list("y"))
+
+graficoTot <- 
+  alt$Chart(tablaGeneral)$
+  mark_bar()$
+  encode(
+    y = alt$Y(
+      "Canton",
+      axis = alt$Axis(title = "")
+    ),
+    x = alt$X(
+      "Alc1:Q", 
+      axis = alt$Axis(title = "Emisiones dequivalentes a toneladas de CO2")
+    ),
+    color = alt$condition(seleccion, "Sector", alt$value("lightgray"))
+  )$
+  properties(selection = seleccion)
+
+graficoEsp <- 
+  alt$Chart(tablaGeneral,
+            title = "Sectores específicos")$
+  mark_bar()$
+  encode(
+    y = alt$Y(
+      "Esp",
+      axis = alt$Axis(title = "")
+    ),
+    x = alt$X(
+      "Alc1:Q",
+      axis = alt$Axis(title = "Emisiones dequivalentes a toneladas de CO2")
+    ),
+    color = alt$Color(
+      "Sector:N",
+      title = "Sectores generales")
+  )$
+  transform_filter(seleccion$ref())
+
+grafCompuesto <- (graficoTot & graficoEsp)$
+  properties(
+    title = "Emisiones de Alcance 1 por sectores según cantón"
+  )$
+  configure_axis(labelLimit=10000)$
+  configure_legend(labelLimit= 0)
+
+grafCompuesto
 ```
 
 
@@ -353,56 +403,6 @@ graficoSec <-
 grafico <- (graficoSec & graficoEsp)$configure_axis(labelLimit=10000)
 
 grafico
-```
-
-Dadas las opciones de interactividad que brinda **Altair** vamos a hacer un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores desagregados.
-
-El código sería el siguiente:
-
-```{r}
-seleccion <- alt$selection(type = "single", 
-                           encodings = list("y"))
-
-graficoTot <- 
-  alt$Chart(tablaGeneral)$
-  mark_bar()$
-  encode(
-    y = alt$Y(
-      "Canton",
-      axis = alt$Axis(title = "")
-    ),
-    x = alt$X(
-      "Alc1:Q", 
-      axis = alt$Axis(title = "")
-    ),
-    color = alt$condition(seleccion, "Sector", alt$value("lightgray"))
-  )$
-  properties(selection = seleccion)
-
-graficoEsp <- 
-  alt$Chart(tablaGeneral,
-            title = "Sectores específicos")$
-  mark_bar()$
-  encode(
-    y = alt$Y(
-      "Esp",
-      axis = alt$Axis(title = "")
-    ),
-    x = "Alc1:Q",
-    color = alt$Color(
-      "Sector:N",
-      title = "Sectores generales")
-  )$
-  transform_filter(seleccion$ref())
-
-grafCompuesto <- (graficoTot & graficoEsp)$
-  properties(
-    title = "Emisiones de Alcance 1 por sectores según cantón"
-  )$
-  configure_axis(labelLimit=10000)$
-  configure_legend(labelLimit= 0)
-
-grafCompuesto
 ```
 
 Cálculo de emisiones condicionadas por población:
