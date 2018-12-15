@@ -65,20 +65,25 @@ tablaGeneralIni <- tablaGeneralIni %>%
 Sectores generales y número de sectores específicos por cada sector general:
 
 ```{r}
-tablaGeneralIni %>% group_by(Sector, Esp) %>% summarise() %>% group_by(Sector) %>% summarise(n())
+library(rmarkdown)
+paged_table(
+  tablaGeneralIni %>% group_by(Sector, Esp) %>% summarise() %>% group_by(Sector) %>% summarise(n())
+)
 ```
 
 Total de sectores específicos:
 
 ```{r}
-tablaGeneralIni %>% 
-  group_by(Esp) %>% 
-  summarise(
-    sumAlc1 = sum(Alc1, na.rm = T),
-    sumAlc2 = sum(Alc2, na.rm = T),
-    sumAlc3 = sum(Alc3, na.rm = T),
-    sumTot = sumAlc1 + sumAlc2) %>% 
-  filter(sumTot != 0)
+paged_table(
+  tablaGeneralIni %>% 
+    group_by(Esp) %>% 
+    summarise(
+      sumAlc1 = sum(Alc1, na.rm = T),
+      sumAlc2 = sum(Alc2, na.rm = T),
+      sumAlc3 = sum(Alc3, na.rm = T),
+      sumTot = sumAlc1 + sumAlc2) %>% 
+    filter(sumTot != 0)
+)
 ```
 Notese que existen varios sectores específicos con cero emisiones en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.
 
@@ -241,9 +246,10 @@ graficoAlcs <-
                   title = "Emisiones (ton. de CO2)",
                   format = ".5s")
     )
-  )
+  )$
+  properties(height = 200)
 
-graficoAlcs  
+graficoAlcs
 ```
 
 
@@ -276,7 +282,11 @@ graficoTotAlc1 <-
                   title = "Alcance 1 (Ton. de CO2)",
                   format = ".5s")
     )
-  )$configure_legend(labelLimit= 0)
+  )$
+  configure_legend(
+    labelLimit= 0
+    )$
+  properties(height = 200)
 
 graficoTotAlc1
 ```
@@ -311,7 +321,11 @@ graficoNor <-
                   title = "Alcance 1 (Ton. CO2)",
                   format = ".5s")
       )
-  )$configure_legend(labelLimit= 0)
+  )$
+  configure_legend(
+    labelLimit= 0
+    )$
+  properties(height = 200)
 
  graficoNor
 ```

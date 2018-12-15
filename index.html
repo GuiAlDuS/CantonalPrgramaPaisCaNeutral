@@ -50,7 +50,7 @@
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/htmlwidgets-1.3/htmlwidgets.js","index_files/jquery-1.11.3/jquery.min.js","index_files/vega-4.0.0/LICENSE","index_files/vega-4.0.0/promise.min.js","index_files/vega-4.0.0/symbol.min.js","index_files/vega-4.0.0/vega.js","index_files/vega-4.0.0/vega.min.js","index_files/vega-embed-3.16.0/LICENSE","index_files/vega-embed-3.16.0/vega-embed-modified.js","index_files/vega-embed-3.16.0/vega-embed.css","index_files/vega-lite-2.6.0/LICENSE","index_files/vega-lite-2.6.0/vega-lite.min.js","index_files/vegawidget-binding-0.0.5.9000/vegawidget.js","index_files/webcomponents-2.0.0/webcomponents.js","LICENSE","TablaGeneralCantones.csv","TutorialDatosCantones.nb.html"]}
+  {"type":"character","attributes":{},"value":["index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/htmlwidgets-1.3/htmlwidgets.js","index_files/jquery-1.11.3/jquery.min.js","index_files/pagedtable-1.1/css/pagedtable.css","index_files/pagedtable-1.1/js/pagedtable.js","index_files/vega-4.0.0/LICENSE","index_files/vega-4.0.0/promise.min.js","index_files/vega-4.0.0/symbol.min.js","index_files/vega-4.0.0/vega.js","index_files/vega-4.0.0/vega.min.js","index_files/vega-embed-3.16.0/LICENSE","index_files/vega-embed-3.16.0/vega-embed-modified.js","index_files/vega-embed-3.16.0/vega-embed.css","index_files/vega-lite-2.6.0/LICENSE","index_files/vega-lite-2.6.0/vega-lite.min.js","index_files/vegawidget-binding-0.0.5.9000/vegawidget.js","index_files/webcomponents-2.0.0/webcomponents.js","LICENSE","TablaGeneralCantones.csv","TutorialDatosCantones.nb.html"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -928,6 +928,8 @@
   </script>
   
   <!--/radix_placeholder_distill-->
+  <link href="index_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+  <script src="index_files/pagedtable-1.1/js/pagedtable.js"></script>
   <script src="index_files/htmlwidgets-1.3/htmlwidgets.js"></script>
   <script src="index_files/vega-4.0.0/promise.min.js"></script>
   <script src="index_files/vega-4.0.0/symbol.min.js"></script>
@@ -1015,46 +1017,34 @@ tablaGeneralIni &lt;- tablaGeneralIni %&gt;%
 <p>Sectores generales y número de sectores específicos por cada sector general:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
-tablaGeneralIni %&gt;% group_by(Sector, Esp) %&gt;% summarise() %&gt;% group_by(Sector) %&gt;% summarise(n())</code></pre>
-<pre><code>
-# A tibble: 5 x 2
-  Sector                                              `n()`
-  &lt;chr&gt;                                               &lt;int&gt;
-1 Agricultura, Silvicultura y Otros Usos de la Tierra     3
-2 Energía Estacionaria                                    8
-3 Procesos Industriales y Uso de Productos                2
-4 Residuos                                                4
-5 Transporte                                              5</code></pre>
+library(rmarkdown)
+paged_table(
+  tablaGeneralIni %&gt;% group_by(Sector, Esp) %&gt;% summarise() %&gt;% group_by(Sector) %&gt;% summarise(n())
+)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Sector"],"name":[1],"type":["chr"],"align":["left"]},{"label":["n()"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Agricultura, Silvicultura y Otros Usos de la Tierra","2":"3"},{"1":"Energía Estacionaria","2":"8"},{"1":"Procesos Industriales y Uso de Productos","2":"2"},{"1":"Residuos","2":"4"},{"1":"Transporte","2":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 <p>Total de sectores específicos:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
-tablaGeneralIni %&gt;% 
-  group_by(Esp) %&gt;% 
-  summarise(
-    sumAlc1 = sum(Alc1, na.rm = T),
-    sumAlc2 = sum(Alc2, na.rm = T),
-    sumAlc3 = sum(Alc3, na.rm = T),
-    sumTot = sumAlc1 + sumAlc2) %&gt;% 
-  filter(sumTot != 0)</code></pre>
-<pre><code>
-# A tibble: 14 x 5
-   Esp                                sumAlc1 sumAlc2  sumAlc3 sumTot
-   &lt;chr&gt;                                &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
- 1 Actividades agrícolas, de silvicu…    493.      0    0.     4.93e2
- 2 Aguas residuales generadas en la …  25716.      0    0.     2.57e4
- 3 Aviación                             6593.      0    0.     6.59e3
- 4 Construcción e industrias manufac… 260406.  18990.   0.     2.79e5
- 5 Disposición de residuos sólidos g… 111885.      0    1.97e5 1.12e5
- 6 Edificios e instalaciones comerci… 151133.  38552.   0.     1.90e5
- 7 Edificios residenciales             15648.  27060.   0.     4.27e4
- 8 Ferroviario                          1056.      0    0.     1.06e3
- 9 Fuentes agregadas y emisiones pro…   1551.      0    0.     1.55e3
-10 Ganadería                            6606.      0    0.     6.61e3
-11 Incineración y quema a cielo abie…   5394.      0    0.     5.39e3
-12 Por carretera                      960369.      0    0.     9.60e5
-13 Tratamiento biológico de residuos…   2221.      0    2.79e0 2.22e3
-14 Uso de Productos                    93584.      0    0.     9.36e4</code></pre>
+paged_table(
+  tablaGeneralIni %&gt;% 
+    group_by(Esp) %&gt;% 
+    summarise(
+      sumAlc1 = sum(Alc1, na.rm = T),
+      sumAlc2 = sum(Alc2, na.rm = T),
+      sumAlc3 = sum(Alc3, na.rm = T),
+      sumTot = sumAlc1 + sumAlc2) %&gt;% 
+    filter(sumTot != 0)
+)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Esp"],"name":[1],"type":["chr"],"align":["left"]},{"label":["sumAlc1"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["sumAlc2"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["sumAlc3"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["sumTot"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Actividades agrícolas, de silvicultura y de pesca","2":"492.7132","3":"0.00","4":"0.000000e+00","5":"492.7132"},{"1":"Aguas residuales generadas en la ciudad","2":"25716.2146","3":"0.00","4":"0.000000e+00","5":"25716.2146"},{"1":"Aviación","2":"6592.5041","3":"0.00","4":"0.000000e+00","5":"6592.5041"},{"1":"Construcción e industrias manufactureras","2":"260405.7659","3":"18989.86","4":"0.000000e+00","5":"279395.6288"},{"1":"Disposición de residuos sólidos generados en la ciudad","2":"111885.3418","3":"0.00","4":"1.967673e+05","5":"111885.3418"},{"1":"Edificios e instalaciones comerciales e institucionales","2":"151132.5497","3":"38552.28","4":"0.000000e+00","5":"189684.8301"},{"1":"Edificios residenciales","2":"15647.7459","3":"27060.16","4":"0.000000e+00","5":"42707.9049"},{"1":"Ferroviario","2":"1056.0968","3":"0.00","4":"0.000000e+00","5":"1056.0968"},{"1":"Fuentes agregadas y emisiones procedentes de fuentes del suelo distintas  al CO2","2":"1550.6077","3":"0.00","4":"0.000000e+00","5":"1550.6077"},{"1":"Ganadería","2":"6606.4454","3":"0.00","4":"0.000000e+00","5":"6606.4454"},{"1":"Incineración y quema a cielo abierto de residuos generados en la ciudad","2":"5394.0300","3":"0.00","4":"0.000000e+00","5":"5394.0300"},{"1":"Por carretera","2":"960369.0520","3":"0.00","4":"0.000000e+00","5":"960369.0520"},{"1":"Tratamiento biológico de residuos generados en la ciudad","2":"2221.0993","3":"0.00","4":"2.792857e+00","5":"2221.0993"},{"1":"Uso de Productos","2":"93583.5716","3":"0.00","4":"0.000000e+00","5":"93583.5716"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 <p>Notese que existen varios sectores específicos con cero emisiones en los tres alcances. De un total de 22 sectores específicos pasamos a 14 con emisiones.</p>
 <p>Para la claridad de los gráficos, eliminamos esos sectores específicos sin emisiones en ninguno de los alcances.</p>
@@ -1184,8 +1174,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0)
 
 mapa</code></pre>
-<div id="htmlwidget-44de30cc30ccc7de659a" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-44de30cc30ccc7de659a">{"x":{
+<div id="htmlwidget-49fd3f6081d94bac2c20" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-49fd3f6081d94bac2c20">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1305,11 +1295,12 @@ graficoAlcs &lt;-
                   title = &quot;Emisiones (ton. de CO2)&quot;,
                   format = &quot;.5s&quot;)
     )
-  )
+  )$
+  properties(height = 200)
 
-graficoAlcs  </code></pre>
-<div id="htmlwidget-4b3adcf919aa8106f266" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4b3adcf919aa8106f266">{"x":{
+graficoAlcs</code></pre>
+<div id="htmlwidget-7c3331d4e0533a786c43" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7c3331d4e0533a786c43">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1439,6 +1430,7 @@ graficoAlcs  </code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar"
   },
   "embed_options": {
@@ -1475,11 +1467,15 @@ graficoTotAlc1 &lt;-
                   title = &quot;Alcance 1 (Ton. de CO2)&quot;,
                   format = &quot;.5s&quot;)
     )
-  )$configure_legend(labelLimit= 0)
+  )$
+  configure_legend(
+    labelLimit= 0
+    )$
+  properties(height = 200)
 
 graficoTotAlc1</code></pre>
-<div id="htmlwidget-c722e8d3a8a93ed63273" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c722e8d3a8a93ed63273">{"x":{
+<div id="htmlwidget-8de50f740445bade7c8e" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8de50f740445bade7c8e">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2226,6 +2222,7 @@ graficoTotAlc1</code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar"
   },
   "embed_options": {
@@ -2264,11 +2261,15 @@ graficoNor &lt;-
                   title = &quot;Alcance 1 (Ton. CO2)&quot;,
                   format = &quot;.5s&quot;)
       )
-  )$configure_legend(labelLimit= 0)
+  )$
+  configure_legend(
+    labelLimit= 0
+    )$
+  properties(height = 200)
 
  graficoNor</code></pre>
-<div id="htmlwidget-b6995b33adfd147138b5" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b6995b33adfd147138b5">{"x":{
+<div id="htmlwidget-fb87ca41505ff4fad8ee" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fb87ca41505ff4fad8ee">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3017,6 +3018,7 @@ graficoNor &lt;-
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar"
   },
   "embed_options": {
@@ -3092,8 +3094,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   configure_legend(labelLimit= 0)
 
 grafCompuesto</code></pre>
-<div id="htmlwidget-5cbee09472a926da27ab" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5cbee09472a926da27ab">{"x":{
+<div id="htmlwidget-e97fb626f6a7801a11f2" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e97fb626f6a7801a11f2">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3951,8 +3953,8 @@ graficoSec &lt;-
 grafico &lt;- (graficoSec &amp; graficoEsp)$configure_axis(labelLimit=10000)
 
 grafico</code></pre>
-<div id="htmlwidget-5fc0401296c8b65483c2" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5fc0401296c8b65483c2">{"x":{
+<div id="htmlwidget-33114171c651cb90a0b8" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-33114171c651cb90a0b8">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
