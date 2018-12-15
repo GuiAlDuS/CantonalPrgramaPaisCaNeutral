@@ -437,6 +437,3 @@ Cálculo de emisiones condicionadas según las áreas de cada cantón:
 ```{r}
 
 ```
-
-***
-![](https://i.creativecommons.org/l/by-nc/3.0/88x31.png)
