@@ -4,7 +4,7 @@ description: |
   Tutorial de análisis de datos de la Dirección de Cambio Climático de Costa Rica como parte del fellow de la Iniciativa Latinoamericana para los Datos Abiertos (ILDA)
 author: 
 - name: "Guillermo Durán Sanabria"
-date: "12/13/2018"
+date: "12/19/2018"
 output:
   radix::radix_article:
     self_contained: false
@@ -328,7 +328,11 @@ Dadas las opciones de interactividad que brinda **Altair** haremos un gráfico i
 seleccion <- alt$selection(type = "single", encodings = list("y")) 
 
 graficoTot <- 
-  alt$Chart(tablaGeneral)$ 
+  alt$Chart(tablaGeneral,
+            title = alt$TitleParams(
+              text = "Cantones",
+              anchor = "end")
+            )$ 
   mark_bar()$ 
   encode( 
     y = alt$Y(
@@ -356,7 +360,10 @@ graficoTot <-
 
 graficoEsp <-
   alt$Chart(tablaGeneral, 
-            title = "Sectores específicos")$ 
+            title = alt$TitleParams(
+              text = "Sectores específicos",
+              anchor = "end")
+            )$ 
   mark_bar()$ 
   encode( 
     y = alt$Y( 
@@ -386,8 +393,10 @@ graficoEsp <-
   transform_filter(seleccion$ref())
 
 grafCompuesto <- (graficoTot & graficoEsp)$ 
-  properties( 
-    title = "Emisiones de Alcance 1 por sectores según cantón" 
+  properties(
+    title = alt$TitleParams(
+      text = "Emisiones de Alcance 1 por sectores según cantón",
+      anchor = "start")
   )$ 
   configure_axis(labelLimit=10000)$
   configure_legend(labelLimit= 0) 
@@ -400,33 +409,14 @@ grafCompuesto
 Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores: 
 
 ```{r} 
-graficoEsp <-
-  alt$Chart(tablaGeneral, 
-            title = "Sectores específicos")$ 
-  mark_bar()$ 
-  encode( 
-    y = alt$Y( 
-      "Esp", 
-      axis = alt$Axis(title = ""), 
-      sort = alt$EncodingSortField( 
-        field = 
-          "Alc1", 
-        order = "descending", 
-        op = "sum") 
-      ), 
-    x = alt$X( 
-      "Alc1:Q", 
-      axis = alt$Axis(title = "Valores del Alcance 1") 
-      ), 
-    color = alt$Color("Canton",
-                      scale=alt$Scale(scheme="dark2")
-                      ), 
-    tooltip = "Esp" 
-    ) 
+seleccion <- alt$selection(type = "single", encodings = list("y")) 
 
 graficoSec <- 
   alt$Chart(tablaGeneral, 
-            title = "Sectores generales")$ 
+            title = alt$TitleParams(
+              text = "Sectores generales",
+              anchor = "end")
+  )$ 
   mark_bar()$ 
   encode( 
     y =
@@ -438,16 +428,71 @@ graficoSec <-
       "Alc1:Q", 
       axis = alt$Axis(title = "") 
     ), 
-    color = "Canton" 
-  ) 
+    color = alt$condition(
+      seleccion, 
+      "Canton", 
+      alt$value("lightgray")
+    ),
+    tooltip = list(
+      alt$Tooltip(
+        field = "Alc1", 
+        type = "quantitative", 
+        title = "Alcance 1 (Ton. CO2)", 
+        format = ".5s") 
+    ) 
+  )$ 
+  properties(selection = seleccion) 
+
+graficoEsp <-
+  alt$Chart(tablaGeneral, 
+            title = alt$TitleParams(
+              text = "Sectores específicos",
+              anchor = "end")
+  )$ 
+  mark_bar()$ 
+  encode( 
+    y = alt$Y( 
+      "Esp", 
+      axis = alt$Axis(title = ""), 
+      sort = alt$EncodingSortField( 
+        field = 
+          "Alc1", 
+        order = "descending", 
+        op = "sum") 
+    ), 
+    x = alt$X( 
+      "Alc1:Q", 
+      axis = alt$Axis(title = "Valores del Alcance 1") 
+    ), 
+    color = alt$Color("Canton",
+                      scale=alt$Scale(scheme="dark2")
+    ), 
+    tooltip = list(
+      alt$Tooltip(
+        field = "Alc1", 
+        type = "quantitative", 
+        title = "Alcance 1 (Ton. CO2)", 
+        format = ".5s")
+    )
+  )$
+  transform_filter(seleccion$ref())
 
 grafico <- (graficoSec & graficoEsp)$
+  properties(
+    title = alt$TitleParams(
+      text = "Emisiones de Alcance 1 según segun sectores",
+      anchor = "start")
+  )$
   configure_axis(labelLimit=10000) 
 
 grafico 
 ``` 
 
-Según vemos en el mapa y en los gráficos los cantones participantes presentan una gran variabilidad en cantidad y fuentes de emisión. Conociendo las características de estos cantones podemos decir que hay cantones netamente urbanos con alta densidad de población como San José, como también cantones con población dispersa que se dedica en su mayoría a actividades agrícolas como Golfito. Dada esta variabilidad de actividades es interesante hacer el cálculo de emisiones condicionadas tanto por población como por área de cada cantón. Para calcular el aporte de emisiones directas (Alcance 1) por persona utilizaremos los datos del último censo nacional de Costa Rica realizado en el 2011. 
+Según vemos en el mapa y en los gráficos los cantones participantes presentan una gran variabilidad en cantidad y fuentes de emisión. 
+
+Conociendo las características de estos cantones podemos decir que hay cantones netamente urbanos con alta densidad de población como San José, como también cantones con población dispersa que se dedica en su mayoría a actividades agrícolas como Golfito. 
+
+Conociendo esta variabilidad de actividades resulta interesante hacer el cálculo de emisiones condicionandolas tanto a la población como por al área de cada cantón. Para calcular el aporte de emisiones directas (Alcance 1) por persona utilizaremos los datos del último censo nacional de Costa Rica realizado en el 2011. 
 
 Estos datos fueron descargados del sistema de consultas del INEC. El archivo con el reporte del INEC en formato csv puede descargarse de [este enlace](https://raw.githubusercontent.com/GuiAlDuS/CantonalProgramaPaisCaNeutral/master/pobCenso2011.csv).
 
@@ -497,7 +542,7 @@ graficoTotAlc1Pers <-
                   title = "Sector general"), 
       alt$Tooltip(field = "Alc1Persona", 
                   type = "quantitative", 
-                  title = "Alcance 1 / habitante (Ton. de CO2)", 
+                  title = "Alc. 1 por hab. (Ton. CO2)", 
                   format = ".3s") 
       ) 
     )$
@@ -544,7 +589,7 @@ graficoTotAlc1Ha <-
                   title = "Sector general"), 
       alt$Tooltip(field = "Alc1Ha", 
                   type = "quantitative", 
-                  title = "Alcance 1 / ha (Ton. de CO2)", 
+                  title = "Alc. 1 por hab. (Ton. CO2)", 
                   format = ".3s") 
       )
     )$
