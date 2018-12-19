@@ -1142,7 +1142,7 @@ mapaBase &lt;-
 
 mapaCantones &lt;- 
   alt$Chart(cantonesEstudio)$ 
-  mark_geoshape( )$
+  mark_geoshape()$
   encode(
     alt$Color(&quot;properties.nom_cant:N&quot;, 
               title = &quot;Cantones&quot;,
@@ -1172,8 +1172,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0) 
 
 mapa </code></pre>
-<div id="htmlwidget-c8678c9d29f5106ab74b" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c8678c9d29f5106ab74b">{"x":{
+<div id="htmlwidget-c2a890a920711ce02589" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c2a890a920711ce02589">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1295,11 +1295,14 @@ graficoAlcs &lt;-
                   title = &quot;Emisiones (ton. de CO2)&quot;, 
                   format = &quot;.5s&quot;) 
       ) 
-    ) 
+  )$
+  properties(
+    height = 200
+  )
 
 graficoAlcs </code></pre>
-<div id="htmlwidget-335f0c597b16ebad408a" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-335f0c597b16ebad408a">{"x":{
+<div id="htmlwidget-3596ef10e6452db5b6cf" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3596ef10e6452db5b6cf">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1429,6 +1432,7 @@ graficoAlcs </code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar",
     "title": "Emisiones por cantón según alcances"
   },
@@ -1468,11 +1472,14 @@ graficoTotAlc1 &lt;-
                   format = &quot;.5s&quot;) 
       )
     )$
-  configure_legend(labelLimit= 0) 
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  )
 
 graficoTotAlc1 </code></pre>
-<div id="htmlwidget-548a49b1137405b319ef" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-548a49b1137405b319ef">{"x":{
+<div id="htmlwidget-35a7df6767dc8ef799b5" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-35a7df6767dc8ef799b5">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2219,6 +2226,7 @@ graficoTotAlc1 </code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar",
     "title": "Emisiones del Alcance 1 por cantón según sectores"
   },
@@ -2263,11 +2271,14 @@ graficoNor &lt;-
         format = &quot;.5s&quot;) 
       ) 
     )$
-  configure_legend(labelLimit= 0)
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  )
 
 graficoNor </code></pre>
-<div id="htmlwidget-0730d9b4b48ae11c8bd8" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0730d9b4b48ae11c8bd8">{"x":{
+<div id="htmlwidget-f14b1906b4e67d7f2400" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f14b1906b4e67d7f2400">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3016,6 +3027,7 @@ graficoNor </code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar",
     "title": "Porcentaje de emisiones del Alcance 1 según sectores"
   },
@@ -3105,8 +3117,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   configure_legend(labelLimit= 0) 
 
 grafCompuesto </code></pre>
-<div id="htmlwidget-e9b4919be08170e28406" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e9b4919be08170e28406">{"x":{
+<div id="htmlwidget-4a01eb0fec9d5cc726c0" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4a01eb0fec9d5cc726c0">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4011,8 +4023,8 @@ grafico &lt;- (graficoSec &amp; graficoEsp)$
   configure_axis(labelLimit=10000) 
 
 grafico </code></pre>
-<div id="htmlwidget-73c845d42469f5d45486" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-73c845d42469f5d45486">{"x":{
+<div id="htmlwidget-60f96c9e16cf0e431e07" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-60f96c9e16cf0e431e07">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4886,11 +4898,14 @@ graficoTotAlc1Pers &lt;-
                   format = &quot;.3s&quot;) 
       ) 
     )$
-  configure_legend(labelLimit= 0) 
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  )
 
 graficoTotAlc1Pers</code></pre>
-<div id="htmlwidget-ac02b15f72644b02704a" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ac02b15f72644b02704a">{"x":{
+<div id="htmlwidget-5a46053cfb6869b1752a" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5a46053cfb6869b1752a">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -5062,6 +5077,7 @@ graficoTotAlc1Pers</code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar",
     "title": "Emisiones del Alcance 1 per cápita"
   },
@@ -5111,11 +5127,14 @@ graficoTotAlc1Ha &lt;-
                   format = &quot;.3s&quot;) 
       )
     )$
-  configure_legend(labelLimit= 0) 
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  ) 
 
 graficoTotAlc1Ha </code></pre>
-<div id="htmlwidget-c7b370cf5758b154f747" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c7b370cf5758b154f747">{"x":{
+<div id="htmlwidget-ffbcfe001b4c01e83d1c" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ffbcfe001b4c01e83d1c">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -5287,6 +5306,7 @@ graficoTotAlc1Ha </code></pre>
         "type": "nominal"
       }
     },
+    "height": 200,
     "mark": "bar",
     "title": "Emisiones del Alcance 1 por hectárea"
   },

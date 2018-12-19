@@ -169,7 +169,7 @@ mapaBase <-
 
 mapaCantones <- 
   alt$Chart(cantonesEstudio)$ 
-  mark_geoshape( )$
+  mark_geoshape()$
   encode(
     alt$Color("properties.nom_cant:N", 
               title = "Cantones",
@@ -242,7 +242,10 @@ graficoAlcs <-
                   title = "Emisiones (ton. de CO2)", 
                   format = ".5s") 
       ) 
-    ) 
+  )$
+  properties(
+    height = 200
+  )
 
 graficoAlcs 
 ``` 
@@ -277,7 +280,10 @@ graficoTotAlc1 <-
                   format = ".5s") 
       )
     )$
-  configure_legend(labelLimit= 0) 
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  )
 
 graficoTotAlc1 
 ``` 
@@ -317,7 +323,10 @@ graficoNor <-
         format = ".5s") 
       ) 
     )$
-  configure_legend(labelLimit= 0)
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  )
 
 graficoNor 
 ``` 
@@ -546,7 +555,10 @@ graficoTotAlc1Pers <-
                   format = ".3s") 
       ) 
     )$
-  configure_legend(labelLimit= 0) 
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  )
 
 graficoTotAlc1Pers
 ``` 
@@ -593,7 +605,10 @@ graficoTotAlc1Ha <-
                   format = ".3s") 
       )
     )$
-  configure_legend(labelLimit= 0) 
+  configure_legend(labelLimit= 0)$
+  properties(
+    height = 200
+  ) 
 
 graficoTotAlc1Ha 
 ``` 
