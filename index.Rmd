@@ -426,7 +426,7 @@ graficoSec <-
       ), 
     x = alt$X( 
       "Alc1:Q", 
-      axis = alt$Axis(title = "") 
+      axis = alt$Axis(title = "Emisiones del Alcance 1 equivalentes a toneladas de CO2")
     ), 
     color = alt$condition(
       seleccion, 
@@ -462,7 +462,7 @@ graficoEsp <-
     ), 
     x = alt$X( 
       "Alc1:Q", 
-      axis = alt$Axis(title = "Valores del Alcance 1") 
+      axis = alt$Axis(title = "Emisiones del Alcance 1 equivalentes a toneladas de CO2") 
     ), 
     color = alt$Color("Canton",
                       scale=alt$Scale(scheme="dark2")

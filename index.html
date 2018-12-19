@@ -1172,8 +1172,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0) 
 
 mapa </code></pre>
-<div id="htmlwidget-4720d16c971646095737" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4720d16c971646095737">{"x":{
+<div id="htmlwidget-c8678c9d29f5106ab74b" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c8678c9d29f5106ab74b">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1298,8 +1298,8 @@ graficoAlcs &lt;-
     ) 
 
 graficoAlcs </code></pre>
-<div id="htmlwidget-2c705b068c801050df15" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2c705b068c801050df15">{"x":{
+<div id="htmlwidget-335f0c597b16ebad408a" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-335f0c597b16ebad408a">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1471,8 +1471,8 @@ graficoTotAlc1 &lt;-
   configure_legend(labelLimit= 0) 
 
 graficoTotAlc1 </code></pre>
-<div id="htmlwidget-40708191e42576d856b0" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-40708191e42576d856b0">{"x":{
+<div id="htmlwidget-548a49b1137405b319ef" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-548a49b1137405b319ef">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2266,8 +2266,8 @@ graficoNor &lt;-
   configure_legend(labelLimit= 0)
 
 graficoNor </code></pre>
-<div id="htmlwidget-c338343aedd7a6f61f8d" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c338343aedd7a6f61f8d">{"x":{
+<div id="htmlwidget-0730d9b4b48ae11c8bd8" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0730d9b4b48ae11c8bd8">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3105,8 +3105,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   configure_legend(labelLimit= 0) 
 
 grafCompuesto </code></pre>
-<div id="htmlwidget-e86266bc26ee10651dd6" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e86266bc26ee10651dd6">{"x":{
+<div id="htmlwidget-e9b4919be08170e28406" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e9b4919be08170e28406">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3951,7 +3951,7 @@ graficoSec &lt;-
       ), 
     x = alt$X( 
       &quot;Alc1:Q&quot;, 
-      axis = alt$Axis(title = &quot;&quot;) 
+      axis = alt$Axis(title = &quot;Emisiones del Alcance 1 equivalentes a toneladas de CO2&quot;)
     ), 
     color = alt$condition(
       seleccion, 
@@ -3987,7 +3987,7 @@ graficoEsp &lt;-
     ), 
     x = alt$X( 
       &quot;Alc1:Q&quot;, 
-      axis = alt$Axis(title = &quot;Valores del Alcance 1&quot;) 
+      axis = alt$Axis(title = &quot;Emisiones del Alcance 1 equivalentes a toneladas de CO2&quot;) 
     ), 
     color = alt$Color(&quot;Canton&quot;,
                       scale=alt$Scale(scheme=&quot;dark2&quot;)
@@ -4011,8 +4011,8 @@ grafico &lt;- (graficoSec &amp; graficoEsp)$
   configure_axis(labelLimit=10000) 
 
 grafico </code></pre>
-<div id="htmlwidget-fdf81b1833c7b0e1a6d2" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fdf81b1833c7b0e1a6d2">{"x":{
+<div id="htmlwidget-73c845d42469f5d45486" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-73c845d42469f5d45486">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4746,7 +4746,7 @@ grafico </code></pre>
           ],
           "x": {
             "axis": {
-              "title": ""
+              "title": "Emisiones del Alcance 1 equivalentes a toneladas de CO2"
             },
             "field": "Alc1",
             "type": "quantitative"
@@ -4795,7 +4795,7 @@ grafico </code></pre>
           ],
           "x": {
             "axis": {
-              "title": "Valores del Alcance 1"
+              "title": "Emisiones del Alcance 1 equivalentes a toneladas de CO2"
             },
             "field": "Alc1",
             "type": "quantitative"
@@ -4889,8 +4889,8 @@ graficoTotAlc1Pers &lt;-
   configure_legend(labelLimit= 0) 
 
 graficoTotAlc1Pers</code></pre>
-<div id="htmlwidget-7090393e7ffadc902479" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7090393e7ffadc902479">{"x":{
+<div id="htmlwidget-ac02b15f72644b02704a" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ac02b15f72644b02704a">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -5114,8 +5114,8 @@ graficoTotAlc1Ha &lt;-
   configure_legend(labelLimit= 0) 
 
 graficoTotAlc1Ha </code></pre>
-<div id="htmlwidget-a12006b95d21977155e3" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a12006b95d21977155e3">{"x":{
+<div id="htmlwidget-c7b370cf5758b154f747" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c7b370cf5758b154f747">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
