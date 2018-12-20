@@ -102,7 +102,7 @@ tablaGeneral <-
 
 ## Gráficos 
 
-Los gráficos se generarán con la libraría [Altair](https://altair-viz.github.io) utilizando la interface para R **reticulate**. Altair es una excelente librería de Python que utiliza la gramática para gráficos interactivos Vega-Lite. La gran ventaja de esta librería versus otras opciones nativas de R como *Shiny*, es que en el caso de Altair no se requiere instalar un servidor como *backend* para realizar los cálculos. Con Altair todos los cálculos para crear las visualizaciones e interactividad corren en el web browser a través de código de javascript generado automáticamente por la librería. Además de esto, Altair permite accesar al código de javascript de cada visualización, haciendo posible su reutilización en otras sitios web. La guía para la instalación de Altair en R la pueden encontrar [acá](https://vegawidget.github.io/altair/). 
+Los gráficos se generarán con la libraría [Altair](https://altair-viz.github.io) utilizando la interface para R **reticulate**. Altair es una excelente librería de Python que utiliza la gramática para gráficos interactivos Vega-Lite. La gran ventaja de esta librería versus otras opciones nativas de R como *Shiny*, es que en el caso de Altair no se requiere instalar un servidor como *backend* para realizar los cálculos. Con Altair todos los cálculos para crear las visualizaciones e interactividad corren en el web browser a través de código de javascript generado automáticamente por la librería. La guía para la instalación de Altair en R la pueden encontrar [acá](https://vegawidget.github.io/altair/). 
 
 El mapa con la ubicación de los cantones se hará utilizando datos geográficos de la infraestructura de datos espaciales de Costa Rica [SNIT](http://www.snitcr.go.cr): 
 
@@ -412,7 +412,7 @@ grafCompuesto
 
 ### Visualizaciones por sectores. 
 
-Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores: 
+Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores. Este gráfico también tiene interactividad al darle click a las barras de sectores generales: 
 
 ```{r} 
 seleccion <- alt$selection(type = "single", encodings = list("y")) 
