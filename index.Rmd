@@ -15,11 +15,9 @@ creative_commons: CC BY-NC
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Este es un tutorial de cómo utilizar el programa R junto con varias librerías de R y Python para el análisis y visualización de los datos de emisiones de gases de varios municipios en Costa Rica. Se trabajará con las tablas resultado del piloto del **Programa País Carbono Neutralidad categoría cantonal**, suministrados por la Dirección de Cambio Climático (DCC) del Ministerio de Ambiente y Energía (MINAE). 
+Este es un tutorial de cómo utilizar el programa R junto con varias librerías de R y Python para el análisis y visualización de los datos de emisiones de gases de varios municipios en Costa Rica. Se trabajará con los datos resultado del piloto del **Programa País Carbono Neutralidad categoría cantonal**, suministrados por la Dirección de Cambio Climático (DCC) del Ministerio de Ambiente y Energía (MINAE) para los cantones de **Belén**, **San José**, **Golfito**, **La Unión** y **Desamparados**. 
 
-La tabla contiene datos del inventario de emisiones de gases de efecto invernadero realizado en los cantones de **Belén**, **San José**, **Golfito**, **La Unión** y **Desamparados**. 
-
-Más información sobre el proyecto que generó estos datos puede accederse en el sitio web de la DCC. Los paquetes que se utilizarán en el análisis son:
+Más información sobre el proyecto que generó estos datos puede accederse en el sitio web de la DCC.
 
 ## Lectura de la tabla de datos 
 
