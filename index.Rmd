@@ -328,6 +328,8 @@ graficoNor <-
 graficoNor 
 ``` 
 
+## Gráficos interactivos 
+
 Dadas las opciones de interactividad que brinda **Altair** haremos un gráfico interactivo donde al hacer click a la barra del cantón nos muestre los valores de emisión por sector específico. El código sería el siguiente: 
 
 ```{r} 
@@ -410,9 +412,7 @@ grafCompuesto <- (graficoTot & graficoEsp)$
 grafCompuesto 
 ``` 
 
-### Visualizaciones por sectores. 
-
-Ahora los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores. Este gráfico también tiene interactividad al darle click a las barras de sectores generales: 
+Ahora hacemos los gráficos de emisiones de *alcance 1* por sectores generales y específicos, mostrando los cantones con colores. Este gráfico también tiene interactividad al darle click a las barras de sectores generales: 
 
 ```{r} 
 seleccion <- alt$selection(type = "single", encodings = list("y")) 
