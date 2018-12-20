@@ -974,17 +974,14 @@
 </div>
 
 <div class="d-article">
-<p>En este tutorial se trabajará con las tablas resultado del piloto del <strong>Programa País Carbono Neutralidad categoría cantonal</strong>, suministrados por la Dirección de Cambio Climático (DCC) del Ministerio de Ambiente y Energía (MINAE).</p>
-<p>La tabla contiene datos del inventario de emisiones de gases de efecto invernadero realizado en los cantones de <strong>Belén</strong>, <strong>San José</strong>, <strong>Golfito</strong>, <strong>La Unión</strong>, <strong>Desamparados</strong> y <strong>Monteverde</strong>.</p>
+<p>Este es un tutorial de cómo utilizar el programa R junto con varias librerías de R y Python para el análisis y visualización de los datos de emisiones de gases de varios municipios en Costa Rica. Se trabajará con las tablas resultado del piloto del <strong>Programa País Carbono Neutralidad categoría cantonal</strong>, suministrados por la Dirección de Cambio Climático (DCC) del Ministerio de Ambiente y Energía (MINAE).</p>
+<p>La tabla contiene datos del inventario de emisiones de gases de efecto invernadero realizado en los cantones de <strong>Belén</strong>, <strong>San José</strong>, <strong>Golfito</strong>, <strong>La Unión</strong> y <strong>Desamparados</strong>.</p>
 <p>Más información sobre el proyecto que generó estos datos puede accederse en el sitio web de la DCC. Los paquetes que se utilizarán en el análisis son:</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre class="r"><code>
-library(tidyverse) </code></pre>
-</div>
 <h2 id="lectura-de-la-tabla-de-datos">Lectura de la tabla de datos</h2>
-<p>La tabla con los datos de los cantones pueden accederse <a href="https://raw.githubusercontent.com/GuiAlDuS/CantonalProgramaPaisCaNeutral/master/TablaGeneralCantones.csv">acá</a>.</p>
+<p>La tabla con los datos de los cantones pueden accederse en <a href="https://raw.githubusercontent.com/GuiAlDuS/CantonalProgramaPaisCaNeutral/master/TablaGeneralCantones.csv">este enlace</a>.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
+library(tidyverse) 
 tablaGeneralIni &lt;- read_csv(&quot;TablaGeneralCantones.csv&quot;) </code></pre>
 </div>
 <p>La tabla cuenta con siete columnas:</p>
@@ -1065,14 +1062,15 @@ tablaGeneral &lt;-
   select(-(4:7), -(12:14)) </code></pre>
 </div>
 <h2 id="graficos">Gráficos</h2>
-<p>Los gráficos se generarán con la libraría Altair, utilizando la interface de R para Python <strong>reticulate</strong>. Altair es una excelente librería para crear gráficos interactivos. La guía para la instalación de Altair en R la pueden encontrar acá. El mapa con ubicación de los cantones se hará utilizando datos geográficos de la Infraestructura de Datos Espaciales de Costa Rica (SNIT):</p>
+<p>Los gráficos se generarán con la libraría <a href="https://altair-viz.github.io">Altair</a> utilizando la interface para R <strong>reticulate</strong>. Altair es una excelente librería de Python que utiliza la gramática para gráficos interactivos Vega-Lite. La gran ventaja de esta librería versus otras opciones nativas de R como <em>Shiny</em>, es que en el caso de Altair no se requiere instalar un servidor como <em>backend</em> para realizar los cálculos. Con Altair todos los cálculos para crear las visualizaciones e interactividad corren en el web browser a través de código de javascript generado automáticamente por la librería. Además de esto, Altair permite accesar al código de javascript de cada visualización, haciendo posible su reutilización en otras sitios web. La guía para la instalación de Altair en R la pueden encontrar <a href="https://vegawidget.github.io/altair/">acá</a>.</p>
+<p>El mapa con la ubicación de los cantones se hará utilizando datos geográficos de la infraestructura de datos espaciales de Costa Rica <a href="http://www.snitcr.go.cr">SNIT</a>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 library(sf) 
 library(gdalUtils) 
 library(rgdal)
 dsn_prov &lt;- &quot;WFS:http://geos.snitcr.go.cr/be/IGN_5/wfs?&quot; 
-ogrListLayers(dsn_prov) #lista de capas en ese WFS </code></pre>
+ogrListLayers(dsn_prov) #comando que genera la lista de capas de ese WFS </code></pre>
 <pre><code>
 [1] &quot;IGN_5:indice_5000&quot;         &quot;IGN_5:curvas_5000&quot;        
 [3] &quot;IGN_5:hidrografia_5000&quot;    &quot;IGN_5:limitecantonal_5k&quot;  
@@ -1172,8 +1170,8 @@ mapa &lt;- (mapaBase + mapaCantones)$
   configure_view(strokeWidth = 0) 
 
 mapa </code></pre>
-<div id="htmlwidget-786c9431882067599f92" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-786c9431882067599f92">{"x":{
+<div id="htmlwidget-26e8e38e7b364fb18b39" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-26e8e38e7b364fb18b39">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1301,8 +1299,8 @@ graficoAlcs &lt;-
   )
 
 graficoAlcs </code></pre>
-<div id="htmlwidget-102e7bea7230f83021b6" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-102e7bea7230f83021b6">{"x":{
+<div id="htmlwidget-add4954e47a4b11a1890" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-add4954e47a4b11a1890">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -1478,8 +1476,8 @@ graficoTotAlc1 &lt;-
   )
 
 graficoTotAlc1 </code></pre>
-<div id="htmlwidget-342969e5e8834d732658" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-342969e5e8834d732658">{"x":{
+<div id="htmlwidget-da14651fc88355d7caef" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-da14651fc88355d7caef">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -2277,8 +2275,8 @@ graficoNor &lt;-
   )
 
 graficoNor </code></pre>
-<div id="htmlwidget-4d0c32b466abc9988efc" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4d0c32b466abc9988efc">{"x":{
+<div id="htmlwidget-38a77a00296dfef78990" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-38a77a00296dfef78990">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -3117,8 +3115,8 @@ grafCompuesto &lt;- (graficoTot &amp; graficoEsp)$
   configure_legend(labelLimit= 0) 
 
 grafCompuesto </code></pre>
-<div id="htmlwidget-67b83ee66878fda048c7" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-67b83ee66878fda048c7">{"x":{
+<div id="htmlwidget-35c0be28c1dc6f3c10e2" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-35c0be28c1dc6f3c10e2">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4023,8 +4021,8 @@ grafico &lt;- (graficoSec &amp; graficoEsp)$
   configure_axis(labelLimit=10000) 
 
 grafico </code></pre>
-<div id="htmlwidget-95e4bbc94c53b1338f6e" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-95e4bbc94c53b1338f6e">{"x":{
+<div id="htmlwidget-85061f4755e89b234a30" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-85061f4755e89b234a30">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -4904,8 +4902,8 @@ graficoTotAlc1Pers &lt;-
   )
 
 graficoTotAlc1Pers</code></pre>
-<div id="htmlwidget-06ee680bf4acb9278937" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-06ee680bf4acb9278937">{"x":{
+<div id="htmlwidget-c45ec415f165ac014155" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c45ec415f165ac014155">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
@@ -5133,8 +5131,8 @@ graficoTotAlc1Ha &lt;-
   ) 
 
 graficoTotAlc1Ha </code></pre>
-<div id="htmlwidget-53b893bdd957da1e9bc1" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
-<script type="application/json" data-for="htmlwidget-53b893bdd957da1e9bc1">{"x":{
+<div id="htmlwidget-f8400019ca562faa19cb" style="width:auto;height:auto;" class="vegawidget html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f8400019ca562faa19cb">{"x":{
   "chart_spec": {
     "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json",
     "config": {
