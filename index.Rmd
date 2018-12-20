@@ -598,7 +598,7 @@ graficoTotAlc1Ha <-
                   title = "Sector general"), 
       alt$Tooltip(field = "Alc1Ha", 
                   type = "quantitative", 
-                  title = "Alc. 1 por hab. (Ton. CO2)", 
+                  title = "Alc. 1 por ha. (Ton. CO2)", 
                   format = ".3s") 
       )
     )$
